@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="/admin/assets/css/app.css" />
     <link rel="stylesheet" href="/admin/assets/css/dark-sidebar.css" />
     <link rel="stylesheet" href="/admin/assets/css/dark-theme.css" />
+    @yield('page_css')
 </head>
 
 <body>
@@ -44,7 +45,11 @@
         <!--page-wrapper-->
         <div class="page-wrapper">
             <!--page-content-wrapper-->
-            @yield('main_content')
+            <div class="page-content-wrapper">
+                <div class="page-content">
+                    @yield('main_content')
+                </div>
+            </div>
             <!--end page-content-wrapper-->
         </div>
         <!--end page-wrapper-->
@@ -123,6 +128,7 @@
         new PerfectScrollbar('.dashboard-social-list');
         new PerfectScrollbar('.dashboard-top-countries');
     </script>
+    @yield('page_js')
 </body>
 
 </html>

@@ -21,6 +21,10 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'create service']);
         Permission::create(['name' => 'edit service']);
         Permission::create(['name' => 'delete service']);
+        Permission::create(['name' => 'create risk']);
+        Permission::create(['name' => 'edit risk']);
+        Permission::create(['name' => 'delete risk']);
+        Permission::create(['name' => 'validate risk']);
 
         // Créer des rôles
         $admin = Role::create(['name' => 'admin']);

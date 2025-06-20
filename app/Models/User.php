@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -27,7 +28,7 @@ class User extends Authenticatable
         'status',
         'confirmation_token',
         'token_expires_at',
-        
+
     ];
 
     /**
@@ -51,5 +52,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function account()
+    {
+        return $this->hasOneThrough(
+            Account::class,
+            AccountUser::class,
+            'user_id',    // Foreign key on account_users
+            'id',         // Foreign key on accounts
+            'id',         // Local key on users
+            'account_id'  // Local key on account_users
+        );
+    }
+    public function ownedAccount()
+    {
+        return $this->hasOne(Account::class, 'owner_id');
+    }
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'service_users');
     }
 }

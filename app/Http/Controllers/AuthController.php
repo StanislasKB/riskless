@@ -46,6 +46,10 @@ class AuthController extends Controller
     {
         return view('auth.pages.reset_password');
     }
+    public function first_reset_password_view()
+    {
+        return view('auth.pages.first_reset_password');
+    }
 
     public function register(Request $request)
     {
@@ -101,7 +105,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'code' => ['required'],
-            
+
         ], [
             'code.required' => 'Le code est obligatoire.',
         ]);
@@ -164,7 +168,7 @@ class AuthController extends Controller
         if (Auth::attempt(request()->only(['email', 'password']))) {
             $request->session()->regenerate();
             if (Auth::user()->email_verified_at && Auth::user()->status == 'ACTIVE') {
-               
+
                 return redirect()->intended(route('global.dashboard.view'));
             } elseif (Auth::user()->status == 'INACTIVE') {
                 return back()->withErrors([
@@ -172,9 +176,13 @@ class AuthController extends Controller
                 ]);
             } else {
                 $user = User::find(Auth::user()->id);
-                Auth::logout();
-                Mail::to($user->email)->send(new ConfirmMail($user));
-                return redirect()->route('auth.confirm_mail.view', ['email' => $user->email]);
+                if ($user->roles->first()->name == 'service_user') {
+                    return redirect()->route('auth.first_reset_password.view');
+                } else {
+                    Auth::logout();
+                    Mail::to($user->email)->send(new ConfirmMail($user));
+                    return redirect()->route('auth.confirm_mail.view', ['email' => $user->email]);
+                }
             }
         }
 
@@ -238,10 +246,10 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'code' => ['required'],
-            
+
         ], [
             'code.required' => 'Le code est obligatoire.',
-            
+
         ]);
         $token = (int)$request->code;
 
@@ -286,6 +294,21 @@ class AuthController extends Controller
         DB::table('password_reset_tokens')->where('email', $user->email)->delete();
         return redirect(route('auth.login.view'))->with('success', 'Votre mot de passe a été réinitialiser avec succès.');
     }
+    public function first_reset_password(Request $request)
+    {
+        $credentials = $request->validate(
+            [
+                'password' => ['required'],
+                'password2' => ['required', 'same:password'],
+            ]
+        );
+        $user = User::findOrFail(Auth::id());
+
+        $user->password = Hash::make($request->input('password'));
+        $user->email_verified_at = now();
+        $user->save();
+        return redirect(route('auth.login.view'))->with('success', 'Votre mot de passe a été réinitialiser avec succès.');
+    }
 
 
     public function change_password(Request $request)
@@ -320,6 +343,27 @@ class AuthController extends Controller
         } while (User::where('confirmation_token', $token)->exists());
 
         return $token;
+    }
+
+    public function change_user_status(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->status == 'ACTIVE') {
+            $user->status = 'INACTIVE';
+            $user->save();
+            return back()->with('success', 'Utilisateur désactivé avec succès.');
+        } elseif ($user->status == 'INACTIVE') {
+            $user->status = 'ACTIVE';
+            $user->save();
+            return back()->with('success', 'Utilisateur activé avec succès.');
+        }
+    }
+    public function delete_user(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'DELETED';
+        $user->save();
+        return back()->with('success', 'Utilisateur supprimé avec succès.');
     }
 
     private function generateUniquePasswordToken()
