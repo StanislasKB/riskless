@@ -104,26 +104,7 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function change_user_status(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        if ($user->status == 'ACTIVE') {
-            $user->status = 'INACTIVE';
-            $user->save();
-            return back()->with('success', 'Utilisateur désactivé avec succès.');
-        } elseif ($user->status == 'INACTIVE') {
-            $user->status = 'ACTIVE';
-            $user->save();
-            return back()->with('success', 'Utilisateur activé avec succès.');
-        }
-    }
-    public function delete_user(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $user->status = 'DELETED';
-        $user->save();
-        return back()->with('success', 'Utilisateur supprimé avec succès.');
-    }
+    
 
     private function genererMotDePasseFort($longueur = 8)
     {
