@@ -176,7 +176,7 @@ class AuthController extends Controller
                 ]);
             } else {
                 $user = User::find(Auth::user()->id);
-                if ($user->roles->first()->name == 'service_user') {
+                if ($user->roles->first()->name != 'owner') {
                     return redirect()->route('auth.first_reset_password.view');
                 } else {
                     Auth::logout();

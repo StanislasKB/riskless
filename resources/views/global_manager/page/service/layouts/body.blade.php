@@ -133,7 +133,7 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a
                                                 class="dropdown-item"
-                                                href="{{ route('global.update_service_user_status', ['id' => $user->id]) }}">
+                                                href="{{ route('global.update_user_status', ['id' => $user->id]) }}">
                                                 @if ($user->status == 'ACTIVE')
                                                     Désactiver
                                                 @elseif ($user->status == 'INACTIVE')
@@ -145,7 +145,7 @@
                                                 Permission</a>
 
                                             <a class="dropdown-item"
-                                                href="{{ route('global.delete_service_user_status', ['id' => $user->id]) }}">Supprimer</a>
+                                                href="{{ route('global.delete_user_status', ['id' => $user->id]) }}">Supprimer</a>
                                             
                                         </div>
                                         @include('global_manager.page.service.layouts.update_permission_modal')

@@ -59,7 +59,7 @@ class ServiceController extends Controller
             'permission' => ['required', 'array'],
             'permission.*' => ['string', 'exists:permissions,name'],
         ]);
-        $password = $this->genererMotDePasseFort();
+        $password = self::genererMotDePasseFort();
         $user = User::create([
             'email' => $validated['email'],
             'username' => $validated['username'],
@@ -106,7 +106,7 @@ class ServiceController extends Controller
 
     
 
-    private function genererMotDePasseFort($longueur = 8)
+    public static function genererMotDePasseFort($longueur = 8)
     {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
         return substr(str_shuffle($characters), 0, $longueur);

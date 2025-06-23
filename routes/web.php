@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,12 +34,17 @@ Route::prefix('/auth')->name('auth.')->group(function () {
 
 Route::prefix('/global')->name('global.')->group(function () {
     Route::get('/dashboard', [GlobalDashboardController::class,'index'])->name('dashboard.view');
+
     Route::get('/services', [ServiceController::class,'index'])->name('service.view');
     Route::post('/services/new', [ServiceController::class,'store'])->name('add_service.post');
     Route::post('/services/user/new', [ServiceController::class,'add_service_user'])->name('add_service_user.post');
     Route::post('/services/user/{id}/permission-update', [ServiceController::class,'updateUserPermissions'])->name('update_service_user_permission.post');
-    Route::get('/services/user/{id}/status/update', [AuthController::class,'change_user_status'])->name('update_service_user_status');
-    Route::get('/services/user/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_service_user_status');
+    
+
+    Route::get('/users', [UserController::class,'users_view'])->name('users.view');
+    Route::post('/users/new', [UserController::class,'add_user'])->name('add_user.post');
+    Route::get('/users/{id}/status/update', [AuthController::class,'change_user_status'])->name('update_user_status');
+    Route::get('/users/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_user_status');
    
 
 });
