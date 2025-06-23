@@ -278,11 +278,20 @@ class AuthController extends Controller
     {
         $credentials = $request->validate(
             [
-                'password' => ['required'],
+                'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
                 'password2' => ['required', 'same:password'],
-                'token' => ['required', 'exists:password_reset_tokens,token'],
-            ]
-        );
+            ],
+            [
+                'password.required' => 'Le mot de passe est obligatoire.',
+                'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+                'password.letters' => 'Le mot de passe doit contenir au moins une lettre.',
+                'password.mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
+                'password.numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
+                'password.symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
+                'password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
+                'password2.required' => 'La confirmation du mot de passe est obligatoire.',
+                'password2.same' => 'Les mots de passe ne correspondent pas.',
+            ]);
 
         $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
 
@@ -296,12 +305,22 @@ class AuthController extends Controller
     }
     public function first_reset_password(Request $request)
     {
-        $credentials = $request->validate(
+       $credentials = $request->validate(
             [
-                'password' => ['required'],
+                'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
                 'password2' => ['required', 'same:password'],
-            ]
-        );
+            ],
+            [
+                'password.required' => 'Le mot de passe est obligatoire.',
+                'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+                'password.letters' => 'Le mot de passe doit contenir au moins une lettre.',
+                'password.mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
+                'password.numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
+                'password.symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
+                'password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
+                'password2.required' => 'La confirmation du mot de passe est obligatoire.',
+                'password2.same' => 'Les mots de passe ne correspondent pas.',
+            ]);
         $user = User::findOrFail(Auth::id());
 
         $user->password = Hash::make($request->input('password'));
@@ -318,7 +337,18 @@ class AuthController extends Controller
             'old_password' => ['required'],
             'new_password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
             'new_password2' => ['required', 'same:new_password'],
-        ]);
+        ],[
+                'old_password.required' => 'Le mot de passe est obligatoire.',
+                'new_password.required' => 'Le mot de passe est obligatoire.',
+                'new_password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+                'new_password.letters' => 'Le mot de passe doit contenir au moins une lettre.',
+                'new_password.mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
+                'new_password.numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
+                'new_password.symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
+                'new_password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
+                'new_password2.required' => 'La confirmation du mot de passe est obligatoire.',
+                'new_password2.same' => 'Les mots de passe ne correspondent pas.',
+            ]);
 
         $user = User::findOrFail(Auth::user()->id);
 

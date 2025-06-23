@@ -73,4 +73,22 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Service::class, 'service_users');
     }
+
+    public function notificationSettings()
+    {
+        return $this->hasMany(UserNotificationSetting::class);
+    }
+
+    public function notificationSettingFor(string $typeCode): ?UserNotificationSetting
+    {
+        return $this->notificationSettings()
+            ->whereHas('notificationType', fn($q) => $q->where('code', $typeCode))
+            ->first();
+    }
+
+    public function isNotificationEnabled(string $typeCode): bool
+    {
+        $setting = $this->notificationSettingFor($typeCode);
+        return $setting ? $setting->enabled : true;
+    }
 }

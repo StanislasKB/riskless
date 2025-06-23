@@ -42,7 +42,12 @@ Route::prefix('/global')->name('global.')->group(function () {
     
 
     Route::get('/users', [UserController::class,'users_view'])->name('users.view');
+    Route::get('/users/profile', [UserController::class,'user_profile'])->name('user_profile.view');
     Route::post('/users/new', [UserController::class,'add_user'])->name('add_user.post');
+    Route::post('/users/update-username', [UserController::class,'update_username'])->name('update_username.post');
+    Route::post('/users/notification-settings', [UserController::class,'updateNotificationPreferences'])->name('update_notifications.post');
+    Route::post('/users/update-password', [AuthController::class,'change_password'])->name('update_password.post');
+    Route::post('/users/update-profile-image', [UserController::class,'update_profil_img'])->name('update_profil_img.post');
     Route::get('/users/{id}/status/update', [AuthController::class,'change_user_status'])->name('update_user_status');
     Route::get('/users/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_user_status');
    
