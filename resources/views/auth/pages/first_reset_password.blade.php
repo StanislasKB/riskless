@@ -21,7 +21,7 @@
                                         @csrf
                                         <div class="mb-3 mt-5">
                                             <label class="form-label">Mot de passe</label>
-                                            <input type="text" class="form-control" 
+                                            <input type="password" class="form-control" 
                                                 name="password" required />
                                         </div>
                                         @error('password')
@@ -31,7 +31,7 @@
                                         @enderror
                                         <div class="mb-3">
                                             <label class="form-label">Confirmation</label>
-                                            <input type="text" class="form-control"
+                                            <input type="password" class="form-control"
                                                 name="password2" required />
                                         </div>
                                         @error('password2')

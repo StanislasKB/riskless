@@ -110,16 +110,11 @@
         
         <!-- Content -->
         <div class="content">
-            <p>Bonjour,</p>
+            <p>Bonjour, </p>
             
-            <p>Vous recevez cet e-mail car nous avons reçu une demande de réinitialisation de mot de passe pour votre compte.</p>
+            <p>Vous recevez cet e-mail car la demande de réinitialisation de votre adresse email a été finalisé.</p>
             
-            <p>Voici votre code de réinitialisation :</p>
-            <a class="button">{{ $token }}</a>
-            
-            <p>Veuillez entrer ce code dans l'application pour finaliser votre réinitialisation de mot de passe.</p>
-            <p>Ce code est valable pendant {{ config('auth.passwords.'.config('auth.defaults.passwords').'.expire') }} minutes.</p>
-            <p>Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer cet e-mail.</p>
+            <p>Vous ne pouvez vous connecter désormais qu'avec la nouvelle adresse email que vous avez défini.</p>
             
             
             <p>N’hésitez pas à nous contacter si vous avez besoin d’aide.</p>

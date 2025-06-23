@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
@@ -42,6 +43,11 @@ Route::prefix('/global')->name('global.')->group(function () {
     
 
     Route::get('/users', [UserController::class,'users_view'])->name('users.view');
+    Route::get('/users/profile/email-change-request', [EmailChangeController::class,'request_view'])->name('email_request.view');
+    Route::get('/users/profile/email-change-check-token', [EmailChangeController::class,'email_change_check_view'])->name('email_change_check.view');
+    Route::get('/users/profile/email-change-resend-token', [EmailChangeController::class,'resendCode'])->name('email_change_resend_code.view');
+    Route::post('/users/profile/email-change-check-token', [EmailChangeController::class,'verifyCode'])->name('email_change_check.post');
+    Route::post('/users/profile/email-change-request', [EmailChangeController::class,'requestEmailChange'])->name('email_request.post');
     Route::get('/users/profile', [UserController::class,'user_profile'])->name('user_profile.view');
     Route::post('/users/new', [UserController::class,'add_user'])->name('add_user.post');
     Route::post('/users/update-username', [UserController::class,'update_username'])->name('update_username.post');

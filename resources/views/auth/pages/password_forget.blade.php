@@ -19,7 +19,7 @@
                         @csrf
                         <div class="mb-3 mt-4">
                             <label class="form-label">Email</label>
-                            <input type="text" class="form-control form-control-lg radius-30"
+                            <input type="email" class="form-control form-control-lg radius-30"
                                 placeholder="example@user.com" name="email" required />
                             @error('email')
                                 <div class="alert alert-danger" role="alert">

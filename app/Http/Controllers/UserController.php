@@ -80,7 +80,7 @@ class UserController extends Controller
      public function update_profil_img(Request $request)
     {
         $credentials = $request->validate([
-            'profil_img' => ['file', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'profil_img' => ['required','file', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
         $user = User::findOrFail(Auth::user()->id);
         $updateData = [];
