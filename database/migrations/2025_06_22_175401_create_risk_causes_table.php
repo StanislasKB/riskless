@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->string('libelle');
+            $table->enum('level',[1,2,3]);
             $table->timestamps();
         });
     }

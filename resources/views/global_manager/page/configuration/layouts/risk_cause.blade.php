@@ -1,36 +1,39 @@
-<div class="card">
-    <div class="card-body">
-        <h4 class="mb-0">Cause risque</h4>
-        <hr>
-        <div class="row gy-3">
-            <div class="col-md-10">
-                <input id="todo-input" type="text" class="form-control" value="">
+<form id="todo-form" action="{{ route('global.add_configuration_risque_cause.post') }}" method="POST">
+    @csrf
+    <div class="card">
+        @if (session('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
             </div>
-            <div class="col-md-2 text-end d-grid">
-                <button type="button" onclick="CreateTodo();" class="btn btn-primary">Add todo</button>
-            </div>
-        </div>
-        <div class="form-row mt-3">
-            <div class="col-12">
-                <div id="todo-container">
-                    <div class="pb-3 todo-item" todo-id="0">
-                        <div class="input-group">
+        @endif
+        <div class="card-body">
+            <h4 class="mb-0">Causes de risque</h4>
+            <hr>
+            <label for="" class="mb-2">Libellé du risque</label>
 
-                            <div class="input-group-text">
-                                <input type="checkbox" onchange="TodoChecked(0)"
-                                    aria-label="Checkbox for following text input" false="">
-                            </div>
-
-                            <input type="text" readonly="" class="form-control false "
-                                aria-label="Text input with checkbox" value="take out the trash">
-
-                            <button todo-id="0" class="btn btn-outline-secondary bg-danger text-white" type="button"
-                                onclick="DeleteTodo(this);" id="button-addon2 ">X</button>
-
-                        </div>
-                    </div>
+            <div class="row gy-3">
+                <div class="col-md-8">
+                    <input id="todo-input" type="text" class="form-control" placeholder="Ex: Atteinte à la vie privée de la clientèle">
+                </div>
+                <div class="col-md-2">
+                    <select id="todo-select" class="form-select">
+                        <option value="1">Niveau 1</option>
+                        <option value="2">Niveau 2</option>
+                        <option value="3">Niveau 3</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-end d-grid">
+                    <button type="button" onclick="CreateTodo();" class="btn btn-primary">Ajouter</button>
                 </div>
             </div>
+
+            <div class="form-row mt-3">
+                <div class="col-12">
+                    <div id="todo-container"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
         </div>
     </div>
-</div>
+</form>

@@ -59,7 +59,9 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::get('/users/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_user_status');
 
 
-    Route::get('/configuration', [ConfigurationController::class,'index'])->name('configuration.view');
+    Route::get('/configuration/add', [ConfigurationController::class,'add'])->name('add_configuration.view');
+    Route::post('/configuration/add/risque-cause', [ConfigurationController::class,'store_risque_cause'])->name('add_configuration_risque_cause.post');
+    Route::post('/configuration/add/risque-category', [ConfigurationController::class,'store_risque_category'])->name('add_configuration_risque_category.post');
    
 
 });
