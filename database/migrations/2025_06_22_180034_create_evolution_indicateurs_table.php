@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('evolution_indicateurs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('indicateur_id')->constrained('indicateurs')->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->double('valeur');
             $table->unsignedTinyInteger('mois');
             $table->unsignedSmallInteger('annee');

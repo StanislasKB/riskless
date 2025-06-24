@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             // Relation avec macroprocessus
             $table->foreignId('macroprocessus_id')->constrained()->onDelete('cascade');
-
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             // Champs du processus
             $table->string('name');
             $table->string('domaine')->nullable();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\ServiceController;
@@ -56,6 +57,9 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::post('/users/update-profile-image', [UserController::class,'update_profil_img'])->name('update_profil_img.post');
     Route::get('/users/{id}/status/update', [AuthController::class,'change_user_status'])->name('update_user_status');
     Route::get('/users/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_user_status');
+
+
+    Route::get('/configuration', [ConfigurationController::class,'index'])->name('configuration.view');
    
 
 });

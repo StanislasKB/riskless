@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('index')->nullable();
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('fiche_risque_id')->constrained()->onDelete('cascade');
             $table->string('type')->nullable();
             $table->string('priorite')->nullable(); 

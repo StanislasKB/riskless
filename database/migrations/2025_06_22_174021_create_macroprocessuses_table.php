@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('macroprocessuses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('entite');
             $table->timestamps();

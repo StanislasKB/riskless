@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('avancement_plan_actions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_action_id')->constrained('plan_actions')->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->unsignedTinyInteger('mois');
             $table->enum('statut', ['A_LANCER','PLANIFIER', 'EN_COURS', 'TERMINER', 'ANNULER','PAUSE'])->default('A_LANCER');
             $table->integer('reste_a_faire')->nullable();
