@@ -32,4 +32,15 @@ class Account extends Model
     {
         return $this->hasMany(Service::class);
     }
+    public function processus()
+    {
+        return $this->hasManyThrough(
+            Processus::class,          // Le modèle final (cible)
+            Macroprocessus::class,     // Le modèle intermédiaire
+            'account_id',              // Clé étrangère sur le modèle intermédiaire (Macroprocessus)
+            'macroprocessus_id',       // Clé étrangère sur le modèle final (Processus)
+            'id',                      // Clé locale sur le modèle Account
+            'id'                       // Clé locale sur le modèle Macroprocessus
+        );
+    }
 }

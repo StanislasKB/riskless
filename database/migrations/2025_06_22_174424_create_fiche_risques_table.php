@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('libelle_risk');
             $table->foreignId('category_id')->constrained('risk_categories')->onDelete('cascade');
             $table->text('description')->nullable();
-            $table->foreignId('macroprocessus_id')->constrained()->onDelete('cascade');
+            $table->foreignId('macroprocessus_id')->constrained('macroprocessuses')->onDelete('cascade');
             $table->foreignId('processus_id')->constrained()->onDelete('cascade');
             $table->string('identified_by')->nullable();
 

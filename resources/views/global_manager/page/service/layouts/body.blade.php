@@ -39,7 +39,7 @@
                                         <img src="/admin/assets/images/avatars/avatar-2.png" width="35"
                                             height="35" class="rounded-circle" alt="" /> --}}
                                         </div>
-                                        <div class="user-plus"><a href="form-file-upload.html"><i
+                                        <div class="user-plus"><a href="{{ route('service.dashboard.view',['uuid'=>$service->uuid]) }}"><i
                                                     class="bx bx-right-arrow-alt"></i></a></div>
                                     </div>
                                     <h6 class="mb-0 text-primary">{{ $service->name }}</h6>

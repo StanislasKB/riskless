@@ -12,4 +12,8 @@ class RiskCategory extends Model
         'libelle',
         
     ];
+     public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
