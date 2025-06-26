@@ -65,8 +65,13 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::get('/configurations/add', [ConfigurationController::class,'add'])->name('add_configuration.view');
     Route::post('/configurations/add/risque-cause', [ConfigurationController::class,'store_risque_cause'])->name('add_configuration_risque_cause.post');
     Route::post('/configurations/update/{id}/risque-cause', [ConfigurationController::class,'update_risque_cause'])->name('update_configuration_risque_cause.post');
+    Route::get('/configurations/delete/{id}/risque-cause', [ConfigurationController::class,'delete_risque_cause'])->name('delete_configuration_risque_cause.post');
     Route::post('/configurations/add/risque-category', [ConfigurationController::class,'store_risque_category'])->name('add_configuration_risque_category.post');
+    Route::post('/configurations/update/{id}/risque-category', [ConfigurationController::class,'update_risque_category'])->name('update_configuration_risque_category.post');
+    Route::get('/configurations/delete/{id}/risque-category', [ConfigurationController::class,'delete_risque_category'])->name('delete_configuration_risque_category.post');
     Route::post('/configurations/add/macroprocessus', [ConfigurationController::class,'store_macroprocessus'])->name('add_configuration_macroprocessus.post');
+    Route::post('/configurations/update/{id}/macroprocessus', [ConfigurationController::class,'update_macroprocessus'])->name('update_configuration_macroprocessus.post');
+    Route::get('/configurations/delete/{id}/macroprocessus', [ConfigurationController::class,'delete_macroprocessus'])->name('delete_configuration_macroprocessus.post');
    
 
     Route::get('/processus', [ProcessusController::class,'index'])->name('processus.view');

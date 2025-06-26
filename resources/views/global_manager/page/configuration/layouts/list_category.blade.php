@@ -39,23 +39,30 @@
                                                         class='bx bx-dots-horizontal-rounded font-24 '></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a
-                                                        class="dropdown-item"
-                                                        href="">
+                                                        class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#editRiskCategory-{{ $category->id }}"
+                                                        href="#">
                                                         Modifier
                                                     </a>
 
                                                     <a class="dropdown-item"
-                                                        href="">Supprimer</a>
+                                                        href="{{ route('global.delete_configuration_risque_category.post',['id'=>$category->id]) }}">Supprimer</a>
 
                                                 </div>
-                                                {{-- @include('global_manager.page.service.layouts.update_permission_modal') --}}
+                                              @include('global_manager.page.configuration.layouts.modals.edit_category_modal')
                                             @endif
                                         
                                     </td>
 
                                 </tr>
                                 @empty
-                                    <h4>Aucune categorie de risque actuellement</h4>
+                                <tr>
+                                    <td>
+<h4>Aucune categorie de risque actuellement</h4>
+                                    </td>
+
+                                </tr>
+                                    
                                 @endforelse
                             </tbody>
                         </table>

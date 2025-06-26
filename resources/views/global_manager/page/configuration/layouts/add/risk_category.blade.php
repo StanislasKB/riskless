@@ -9,7 +9,7 @@
             <div class="row gy-3">
                 <div class="col-md-10">
                     
-                    <input id="category-input" type="text" class="form-control" placeholder="Ex: Financier">
+                    <input id="category-input" type="text" class="form-control" placeholder="Ex: Risque non conformité">
                 </div>
                 <div class="col-md-2 text-end d-grid">
                     <button type="button" onclick="CreateCategory();" class="btn btn-primary">Ajouter</button>

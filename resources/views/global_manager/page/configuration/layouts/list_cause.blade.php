@@ -7,9 +7,7 @@
                 </div>
             @endif
 
-            @error('error')
-                <div class="alert alert-danger" role="alert">{{ $message }}</div>
-            @enderror
+            
             @foreach ($errors->all() as $error)
                 <div class="alert alert-danger" role="alert">{{ $error }}</div>
             @endforeach
@@ -60,7 +58,8 @@
                                                 </a>
 
 
-                                                <a class="dropdown-item" href="">Supprimer</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('global.delete_configuration_risque_cause.post', ['id' => $cause->id]) }}">Supprimer</a>
 
                                             </div>
                                             @include('global_manager.page.configuration.layouts.modals.edit_cause_modal')
@@ -70,7 +69,11 @@
 
                                 </tr>
                             @empty
-                                <h4>Aucune cause de risque actuellement</h4>
+                                <tr>
+                                    <td>
+                                        <h4>Aucune cause de risque actuellement</h4>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>

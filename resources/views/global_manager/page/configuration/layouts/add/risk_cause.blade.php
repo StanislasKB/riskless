@@ -6,9 +6,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        @error('error')
-            <div class="alert alert-danger" role="alert">{{ $message }}</div>
-        @enderror
+        
         @foreach ($errors->all() as $error)
             <div class="alert alert-danger" role="alert">{{ $error }}</div>
         @endforeach
