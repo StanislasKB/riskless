@@ -70,7 +70,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>
+                                    <td colspan="100%">
                                         <h4>Aucune cause de risque actuellement</h4>
                                     </td>
                                 </tr>

@@ -7,9 +7,7 @@
                 </div>
             @endif
 
-            @error('error')
-                <div class="alert alert-danger" role="alert">{{ $message }}</div>
-            @enderror
+           
             @foreach ($errors->all() as $error)
                 <div class="alert alert-danger" role="alert">{{ $error }}</div>
             @endforeach
@@ -95,19 +93,19 @@
                                     </td>
 
                                     <td>
-                                        @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $cause->creator->id != Auth::id)
+                                        @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $process->creator->id != Auth::id)
                                             -
                                         @else
                                             <a class="btn split-bg-primary" data-bs-toggle="dropdown"> <i
                                                     class='bx bx-dots-horizontal-rounded font-24 '></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a
-                                                    class="dropdown-item" href="">
+                                                    class="dropdown-item" href="{{ route('global.update_processus.view',['id'=>$process->id]) }}">
                                                     Modifier
                                                 </a>
 
 
-                                                <a class="dropdown-item" href="">Supprimer</a>
+                                                <a class="dropdown-item" href="{{ route('global.delete_processus.post',['id'=>$process->id]) }}">Supprimer</a>
 
                                             </div>
                                             {{-- @include('global_manager.page.service.layouts.update_permission_modal') --}}
@@ -117,7 +115,8 @@
 
                                 </tr>
                             @empty
-                                <h4>Aucune cause de risque actuellement</h4>
+                            <tr><td colspan="100%"><h4>Aucun processus actuellement</h4></td></tr>
+                                
                             @endforelse
                         </tbody>
                     </table>

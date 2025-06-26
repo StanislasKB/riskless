@@ -59,7 +59,7 @@
 
                                 </tr>
                             @empty
-                            <tr><td><h4>Aucun utilisateur global actuellement</h4></td></tr>
+                            <tr><td colspan="100%"><h4>Aucun utilisateur global actuellement</h4></td></tr>
                                 
                             @endforelse
                         </tbody>
