@@ -4,7 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\GlobalDashboardController;
+use App\Http\Controllers\ProcessusController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceDashboardController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,9 +61,27 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::get('/users/{id}/status/delete', [AuthController::class,'delete_user'])->name('delete_user_status');
 
 
-    Route::get('/configuration/add', [ConfigurationController::class,'add'])->name('add_configuration.view');
-    Route::post('/configuration/add/risque-cause', [ConfigurationController::class,'store_risque_cause'])->name('add_configuration_risque_cause.post');
-    Route::post('/configuration/add/risque-category', [ConfigurationController::class,'store_risque_category'])->name('add_configuration_risque_category.post');
+    Route::get('/configurations', [ConfigurationController::class,'index'])->name('configurations.view');
+    Route::get('/configurations/add', [ConfigurationController::class,'add'])->name('add_configuration.view');
+    Route::post('/configurations/add/risque-cause', [ConfigurationController::class,'store_risque_cause'])->name('add_configuration_risque_cause.post');
+    Route::post('/configurations/update/{id}/risque-cause', [ConfigurationController::class,'update_risque_cause'])->name('update_configuration_risque_cause.post');
+    Route::get('/configurations/delete/{id}/risque-cause', [ConfigurationController::class,'delete_risque_cause'])->name('delete_configuration_risque_cause.post');
+    Route::post('/configurations/add/risque-category', [ConfigurationController::class,'store_risque_category'])->name('add_configuration_risque_category.post');
+    Route::post('/configurations/update/{id}/risque-category', [ConfigurationController::class,'update_risque_category'])->name('update_configuration_risque_category.post');
+    Route::get('/configurations/delete/{id}/risque-category', [ConfigurationController::class,'delete_risque_category'])->name('delete_configuration_risque_category.post');
+    Route::post('/configurations/add/macroprocessus', [ConfigurationController::class,'store_macroprocessus'])->name('add_configuration_macroprocessus.post');
+    Route::post('/configurations/update/{id}/macroprocessus', [ConfigurationController::class,'update_macroprocessus'])->name('update_configuration_macroprocessus.post');
+    Route::get('/configurations/delete/{id}/macroprocessus', [ConfigurationController::class,'delete_macroprocessus'])->name('delete_configuration_macroprocessus.post');
    
 
+    Route::get('/processus', [ProcessusController::class,'index'])->name('processus.view');
+    Route::get('/processus/add', [ProcessusController::class,'add'])->name('add_processus.view');
+    Route::get('/processus/{id}/update', [ProcessusController::class,'update_view'])->name('update_processus.view');
+    Route::post('/processus/{id}/update', [ProcessusController::class,'update'])->name('update_processus.post');
+    Route::get('/processus/{id}/delete', [ProcessusController::class,'destroy'])->name('delete_processus.post');
+    Route::post('/processus/add', [ProcessusController::class,'store'])->name('add_processus.post');
+});
+
+Route::prefix('/service/{uuid}')->name('service.')->group(function () {
+    Route::get('/dashboard', [ServiceDashboardController::class,'index'])->name('dashboard.view');
 });

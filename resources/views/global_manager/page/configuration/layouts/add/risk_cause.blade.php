@@ -6,6 +6,10 @@
                 {{ session('success') }}
             </div>
         @endif
+        
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-danger" role="alert">{{ $error }}</div>
+        @endforeach
         <div class="card-body">
             <h4 class="mb-0">Causes de risque</h4>
             <hr>
@@ -13,7 +17,8 @@
 
             <div class="row gy-3">
                 <div class="col-md-8">
-                    <input id="todo-input" type="text" class="form-control" placeholder="Ex: Atteinte à la vie privée de la clientèle">
+                    <input id="todo-input" type="text" class="form-control"
+                        placeholder="Ex: Atteinte à la vie privée de la clientèle">
                 </div>
                 <div class="col-md-2">
                     <select id="todo-select" class="form-select">

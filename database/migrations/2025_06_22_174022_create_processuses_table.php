@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('processuses', function (Blueprint $table) {
             $table->id();
             // Relation avec macroprocessus
-            $table->foreignId('macroprocessus_id')->constrained()->onDelete('cascade');
+            $table->foreignId('macroprocessus_id')->constrained('macroprocessuses')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             // Champs du processus
             $table->string('name');
