@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
+use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\ProcessusController;
 use App\Http\Controllers\ServiceController;
@@ -84,4 +85,5 @@ Route::prefix('/global')->name('global.')->group(function () {
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/dashboard', [ServiceDashboardController::class,'index'])->name('dashboard.view');
+    Route::get('/referentiel/risk/add', [FicheRisqueController::class,'form_view'])->name('add_fiche_risque.view');
 });
