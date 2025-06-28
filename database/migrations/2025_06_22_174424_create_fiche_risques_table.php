@@ -47,7 +47,7 @@ return new class extends Migration
             // Booleans : impacts / conséquences
             $table->boolean('manque_a_gagner')->default(false);
             $table->boolean('is_validated')->default(false);
-            $table->boolean('consequence_reglementataire')->default(false);
+            $table->boolean('consequence_reglementaire')->default(false);
             $table->boolean('consequence_juridique')->default(false);
             $table->boolean('consequence_humaine')->default(false);
             $table->boolean('interruption_processus')->default(false);
@@ -67,9 +67,6 @@ return new class extends Migration
             $table->integer('indicateur_risque_avere')->nullable();
             $table->integer('indicateur_risque_evite')->nullable();
             $table->boolean('action_maitrise_risque')->default(false);
-            $table->foreignId('plan_action_id')->nullable()->constrained()->nullOnDelete();
-            $table->boolean('a_indicateur')->default(false);
-            $table->foreignId('indicateur_id')->nullable()->constrained()->nullOnDelete();
 
             // Autres
             $table->text('other_informations')->nullable();

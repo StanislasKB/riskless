@@ -17,9 +17,8 @@ return new class extends Migration
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('fiche_risque_id')->constrained()->onDelete('cascade');
-            $table->string('type')->nullable();
-            $table->string('priorite')->nullable(); 
+            $table->string('type')->nullable(); //Atténuation, Prévention, Atténuation et Prévention
+            $table->string('priorite')->nullable(); // Forte, Moyenne, Faible 
             $table->string('responsable')->nullable();
             $table->text('description')->nullable();
             $table->dateTime('date_debut_prevue')->nullable();
