@@ -146,7 +146,7 @@
 
                                             <a class="dropdown-item"
                                                 href="{{ route('global.delete_user_status', ['id' => $user->id]) }}">Supprimer</a>
-                                            
+
                                         </div>
                                         @include('global_manager.page.service.layouts.update_permission_modal')
                                         @else
