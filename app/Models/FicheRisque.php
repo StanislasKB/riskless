@@ -90,16 +90,6 @@ class FicheRisque extends Model
         return $this->belongsTo(Processus::class);
     }
 
-    public function planAction()
-    {
-        return $this->belongsTo(PlanAction::class);
-    }
-
-    public function indicateur()
-    {
-        return $this->belongsTo(Indicateur::class);
-    }
-
     public function scopeValidated($query)
     {
         return $query->where('is_validated', true);

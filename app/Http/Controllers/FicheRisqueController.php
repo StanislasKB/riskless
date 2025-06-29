@@ -18,8 +18,10 @@ class FicheRisqueController extends Controller
     public function index($uuid)
     {
         $service = Service::where('uuid', $uuid)->first();
+        $fiche_risques = $service->fiche_risques()->get();
         return view('service_manager.pages.referentiel.index',[
             'service'=> $service,
+            'fiche_risques'=> $fiche_risques,
         ]);
     }
 

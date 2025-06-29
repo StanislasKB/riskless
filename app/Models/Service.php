@@ -25,4 +25,8 @@ class Service extends Model
     {
         return $this->belongsTo(Account::class);
     }
+     public function fiche_risques()
+    {
+        return $this->hasMany(FicheRisque::class,'service_id');
+    }
 }
