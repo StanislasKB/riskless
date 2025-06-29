@@ -5,6 +5,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
+use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceDashboardController;
@@ -44,7 +45,7 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::post('/services/new', [ServiceController::class,'store'])->name('add_service.post');
     Route::post('/services/user/new', [ServiceController::class,'add_service_user'])->name('add_service_user.post');
     Route::post('/services/user/{id}/permission-update', [ServiceController::class,'updateUserPermissions'])->name('update_service_user_permission.post');
-    
+
 
     Route::get('/users', [UserController::class,'users_view'])->name('users.view');
     Route::get('/users/profile/email-change-request', [EmailChangeController::class,'request_view'])->name('email_request.view');
@@ -73,7 +74,7 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::post('/configurations/add/macroprocessus', [ConfigurationController::class,'store_macroprocessus'])->name('add_configuration_macroprocessus.post');
     Route::post('/configurations/update/{id}/macroprocessus', [ConfigurationController::class,'update_macroprocessus'])->name('update_configuration_macroprocessus.post');
     Route::get('/configurations/delete/{id}/macroprocessus', [ConfigurationController::class,'delete_macroprocessus'])->name('delete_configuration_macroprocessus.post');
-   
+
 
     Route::get('/processus', [ProcessusController::class,'index'])->name('processus.view');
     Route::get('/processus/add', [ProcessusController::class,'add'])->name('add_processus.view');
@@ -85,6 +86,7 @@ Route::prefix('/global')->name('global.')->group(function () {
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/dashboard', [ServiceDashboardController::class,'index'])->name('dashboard.view');
+    Route::get('/plan-actions', [PlanActionController::class,'index'])->name('plan_actions.view');
     Route::get('/referentiel/risk/add', [FicheRisqueController::class,'form_view'])->name('add_fiche_risque.view');
     Route::post('/referentiel/risk/add', [FicheRisqueController::class,'store'])->name('add_fiche_risque.post');
 });

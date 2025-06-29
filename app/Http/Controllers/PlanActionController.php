@@ -9,9 +9,7 @@ class PlanActionController extends Controller
     //
     public function index(){
 
-
-
-        return view('plan_action.index');
+        return view('service_manager.pages.plan_action.index');
 
     }
 }
