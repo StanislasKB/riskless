@@ -38,12 +38,15 @@
                 }
             };
             $('#risk_cause').DataTable({
+                scrollX: true,
                 language: dataTableLangFr
             });
             $('#risk_category').DataTable({
+                scrollX: true,
                 language: dataTableLangFr
             });
             $('#macroprocessus').DataTable({
+                scrollX: true,
                 language: dataTableLangFr
             });
 

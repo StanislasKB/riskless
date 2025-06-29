@@ -75,6 +75,7 @@
             };
            
             $('#service_user').DataTable({
+                scrollX: true,
                 language: dataTableLangFr
             });
 
