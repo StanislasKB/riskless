@@ -32,6 +32,10 @@ class Account extends Model
     {
         return $this->hasMany(Service::class);
     }
+    public function causes()
+    {
+        return $this->hasMany(RiskCause::class);
+    }
     public function processus()
     {
         return $this->hasManyThrough(
