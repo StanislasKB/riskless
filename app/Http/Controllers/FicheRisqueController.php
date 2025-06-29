@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\DB;
 
 class FicheRisqueController extends Controller
 {
+    public function index($uuid)
+    {
+        $service = Service::where('uuid', $uuid)->first();
+        return view('service_manager.pages.referentiel.index',[
+            'service'=> $service,
+        ]);
+    }
+
     public function form_view($uuid)
     {
         // dd($this->getCotationFinale('CRITIQUE','PERMANENT'));

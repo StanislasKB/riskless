@@ -7,7 +7,7 @@
                 </div>
             @endif
 
-           
+
             @foreach ($errors->all() as $error)
                 <div class="alert alert-danger" role="alert">{{ $error }}</div>
             @endforeach
@@ -19,8 +19,9 @@
                         <h5 class="mb-0">Processus</h5>
                     </div>
                 </div>
-                <div class="table-responsive mt-3">
-                    <table class="table table-striped table-hover table-sm mb-0">
+                <hr>
+                <div class="table-responsive">
+                    <table id="processus" class="table table-striped table-sm mb-0">
                         <thead>
                             <tr>
                                 <th>Entité
@@ -100,27 +101,37 @@
                                                     class='bx bx-dots-horizontal-rounded font-24 '></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a
-                                                    class="dropdown-item" href="{{ route('global.update_processus.view',['id'=>$process->id]) }}">
+                                                    class="dropdown-item"
+                                                    href="{{ route('global.update_processus.view', ['id' => $process->id]) }}">
                                                     Modifier
                                                 </a>
 
 
-                                                <a class="dropdown-item" href="{{ route('global.delete_processus.post',['id'=>$process->id]) }}">Supprimer</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('global.delete_processus.post', ['id' => $process->id]) }}">Supprimer</a>
 
                                             </div>
-                                            {{-- @include('global_manager.page.service.layouts.update_permission_modal') --}}
                                         @endif
 
                                     </td>
 
                                 </tr>
                             @empty
-                            <tr><td colspan="100%"><h4>Aucun processus actuellement</h4></td></tr>
-                                
+                                <tr>
+                                    <td colspan="100%">
+                                        <h4>Aucun processus actuellement</h4>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+
+
+
+
+
+
             </div>
         </div>
     </div>

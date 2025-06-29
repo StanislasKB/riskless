@@ -10,8 +10,10 @@
                         <h5 class="mb-0">Macroprocessus</h5>
                     </div>
                 </div>
-                <div class="table-responsive mt-3">
-                    <table class="table table-striped table-hover table-sm mb-0">
+
+                <hr>
+                <div class="table-responsive">
+                    <table id="macroprocessus" class="table table-striped table-sm mb-0">
                         <thead>
                             <tr>
                                 <th>Nom
@@ -49,7 +51,8 @@
                                                 </a>
 
 
-                                                <a class="dropdown-item" href="{{ route('global.delete_configuration_macroprocessus.post',['id'=>$macro->id]) }}">Supprimer</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('global.delete_configuration_macroprocessus.post', ['id' => $macro->id]) }}">Supprimer</a>
 
                                             </div>
                                             @include('global_manager.page.configuration.layouts.modals.edit_macro_modal')
@@ -59,10 +62,23 @@
 
                                 </tr>
                             @empty
-                            <tr><td colspan="100%"><h4>Aucun utilisateur global actuellement</h4></td></tr>
-                                
+                                <tr>
+                                    <td colspan="100%">
+                                        <h4>Aucun utilisateur global actuellement</h4>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
+                    </table>
+                </div>
+
+
+
+
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped table-hover table-sm mb-0">
+
                     </table>
                 </div>
             </div>

@@ -64,8 +64,9 @@
                         @include('global_manager.page.service.layouts.add_user_modal')
                     </div>
                 </div>
+                <hr>
                 <div class="table-responsive mt-3">
-                    <table class="table table-striped table-hover table-sm mb-0">
+                    <table id="service_user" class="table table-striped table-hover table-sm mb-0">
                         <thead>
                             <tr>
                                 <th>Nom<i class='bx bx-up-arrow-alt ms-2'></i>

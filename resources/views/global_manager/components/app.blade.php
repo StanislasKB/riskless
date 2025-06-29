@@ -14,6 +14,8 @@
     <link href="/admin/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
     <link href="/admin/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
     <link href="/admin/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
+        <link href="/admin/assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+	<link href="/admin/assets/plugins/datatable/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
     <!-- loader-->
     <link href="/admin/assets/css/pace.min.css" rel="stylesheet" />
     <script src="/admin/assets/js/pace.min.js"></script>
@@ -122,6 +124,7 @@
     <script src="/admin/assets/plugins/vectormap/jquery-jvectormap-au-mill.js"></script>
     <script src="/admin/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
     <script src="/admin/assets/js/index.js"></script>
+    <script src="/admin/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <!-- App JS -->
     <script src="/admin/assets/js/app.js"></script>
     <script>

@@ -7,7 +7,7 @@
                 </div>
             @endif
 
-            
+
             @foreach ($errors->all() as $error)
                 <div class="alert alert-danger" role="alert">{{ $error }}</div>
             @endforeach
@@ -19,8 +19,9 @@
                         <h5 class="mb-0">Causes de risque</h5>
                     </div>
                 </div>
-                <div class="table-responsive mt-3">
-                    <table class="table table-striped table-hover table-sm mb-0">
+<hr>
+                <div class="table-responsive">
+                    <table id="risk_cause" class="table table-striped table-sm mb-0">
                         <thead>
                             <tr>
                                 <th>Libellé
@@ -76,6 +77,7 @@
                                 </tr>
                             @endforelse
                         </tbody>
+
                     </table>
                 </div>
             </div>

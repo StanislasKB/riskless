@@ -87,6 +87,7 @@ Route::prefix('/global')->name('global.')->group(function () {
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/dashboard', [ServiceDashboardController::class,'index'])->name('dashboard.view');
     Route::get('/plan-actions', [PlanActionController::class,'index'])->name('plan_actions.view');
+    Route::get('/referentiel', [FicheRisqueController::class,'index'])->name('fiche_risque.view');
     Route::get('/referentiel/risk/add', [FicheRisqueController::class,'form_view'])->name('add_fiche_risque.view');
     Route::post('/referentiel/risk/add', [FicheRisqueController::class,'store'])->name('add_fiche_risque.post');
 });
