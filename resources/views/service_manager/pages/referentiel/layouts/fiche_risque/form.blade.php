@@ -15,7 +15,7 @@
             @endforeach
             <div class="card-body">
                 <div class="p-4 border rounded">
-                    <form class="row g-3" action="{{ route('global.add_processus.post') }}" method="POST">
+                    <form class="row g-3" action="{{ route('service.add_fiche_risque.post', ['uuid' => $service->uuid]) }}" method="POST">
                         @csrf
                         <div class="col-md-4">
                             <label for="part_index" class="form-label">Partie fixe index</label>
@@ -51,8 +51,8 @@
                             <label for="category" class="form-label">Catégorie du risque</label>
                             <select class="form-select" id="category" name="category" required>
                                 <option selected disabled>Choisissez la catégorie</option>
-                                @foreach ($macroprocessus as $macro)
-                                    <option value="{{ $macro->id }}"> {{ $macro->name }} </option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}"> {{ $category->libelle }} </option>
                                 @endforeach
 
                             </select>
@@ -151,6 +151,7 @@
                         <div class="col-md-6">
                             <label for="manque_a_gagner" class="form-label">Manque à gagner</label>
                             <select class="form-select" id="manque_a_gagner" name="manque_a_gagner" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -158,6 +159,7 @@
                         <div class="col-md-6">
                             <label for="consequence_reglementaire" class="form-label">Conséquences réglémentaires</label>
                             <select class="form-select" id="consequence_reglementaire" name="consequence_reglementaire" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -180,6 +182,7 @@
                         <div class="col-md-6">
                             <label for="interruption_processus" class="form-label">Interruption de processus</label>
                             <select class="form-select" id="interruption_processus" name="interruption_processus" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -187,6 +190,7 @@
                         <div class="col-md-6">
                             <label for="risque_image" class="form-label">Risque d'image</label>
                             <select class="form-select" id="risque_image" name="risque_image" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -194,6 +198,7 @@
                         <div class="col-md-6">
                             <label for="insatisfaction_client" class="form-label">Insatisfaction client</label>
                             <select class="form-select" id="insatisfaction_client" name="insatisfaction_client" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -201,6 +206,7 @@
                         <div class="col-md-6">
                             <label for="impact_risque_credit" class="form-label">Impact risque de crédit</label>
                             <select class="form-select" id="impact_risque_credit" name="impact_risque_credit" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -208,6 +214,7 @@
                         <div class="col-md-6">
                             <label for="impact_risque_marche" class="form-label">Impact risque de marché</label>
                             <select class="form-select" id="impact_risque_marche" name="impact_risque_marche" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -255,13 +262,14 @@
                         <div class="col-md-6">
                             <label for="risque_a_piloter" class="form-label">Risque à piloter</label>
                             <select class="form-select" id="risque_a_piloter" name="risque_a_piloter" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="kri-create-choice" style="display: none;">
                             <label for="validationSelectKRI" class="form-label">Indicateur risque (KRI)</label>
-                            <select class="form-select" id="validationSelectKRI" name="" required>
+                            <select class="form-select" id="validationSelectKRI" name="kri_choice">
                                 <option value="">-- Choisir une option --</option>
                                 <option value="create">Créer un nouveau</option>
                                 <option value="select">Sélectionner un indicateur risque</option>
@@ -341,13 +349,14 @@
                         <div class="col-md-6">
                             <label for="action_maitrise_risque" class="form-label">Action de maîtrise de risques</label>
                             <select class="form-select" id="action_maitrise_risque" name="action_maitrise_risque" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="pa-create-choice" style="display: none;">
                             <label for="validationSelectPA" class="form-label">Plan d'action</label>
-                            <select class="form-select" id="validationSelectPA" name="" required>
+                            <select class="form-select" id="validationSelectPA" name="pa_choice" required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="create_pa">Créer un nouveau</option>
                                 <option value="select_pa">Sélectionner un plan d'action</option>

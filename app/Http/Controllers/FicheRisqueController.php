@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\FicheRisque;
+use App\Models\FicheRisqueIndicateur;
+use App\Models\FicheRisquePlanAction;
 use App\Models\Indicateur;
 use App\Models\Macroprocessus;
+use App\Models\PlanAction;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,12 +22,14 @@ class FicheRisqueController extends Controller
         $account = Auth::user()->account;
         $processus = $account->processus()->get();
         $causes = $account->causes()->get();
+        $categories = $account->categories()->get();
         $macroprocessus = Macroprocessus::where('account_id', Auth::user()->account->id)->get();
         return view('service_manager.pages.referentiel.create', [
             'service' => $service,
             'macroprocessus' => $macroprocessus,
             'processus' => $processus,
             'causes' => $causes,
+            'categories' => $categories,
         ]);
     }
 
@@ -32,6 +37,88 @@ class FicheRisqueController extends Controller
     public function store(Request $request, $uuid)
     {
         $service = Service::where('uuid', $uuid)->first();
+        $messages = [
+            // Champs simples
+            'part_index.required' => 'L’index est requis.',
+            'entite.required' => 'L’entité est requise.',
+            'departement.required' => 'Le département est requis.',
+            'version.required' => 'La version est requise.',
+            'entretiens.required' => 'Le champ des entretiens est requis.',
+            'ref_supp.string' => 'La référence supplémentaire doit être une chaîne de caractères.',
+            'libelle_risk.required' => 'Le libellé du risque est requis.',
+            'description.required' => 'La description est requise.',
+            'identified_by.required' => 'Le champ "Identifié par" est requis.',
+
+            // Relations
+            'category.exists' => 'La catégorie de risque sélectionnée est invalide.',
+            'macroprocessus.exists' => 'Le macroprocessus sélectionné est invalide.',
+            'processus.exists' => 'Le processus sélectionné est invalide.',
+            'cause_level_1.exists' => 'La cause niveau 1 est invalide.',
+            'cause_level_2.exists' => 'La cause niveau 2 est invalide.',
+            'cause_level_3.exists' => 'La cause niveau 3 est invalide.',
+
+            // Fréquence et impact
+            'frequence.required' => 'La fréquence est requise.',
+            'frequence.in' => 'La fréquence sélectionnée est invalide.',
+            'brut_impact_value.required' => 'La valeur d’impact brut est requise.',
+            'brut_impact_value.integer' => 'La valeur d’impact brut doit être un nombre entier.',
+
+            // Conséquences
+            'manque_a_gagner.required' => 'Le champ "Manque à gagner" est requis.',
+            'consequence_reglementaire.required' => 'Le champ "Conséquence réglementaire" est requis.',
+            'consequence_juridique.required' => 'Le champ "Conséquence juridique" est requis.',
+            'consequence_humaine.required' => 'Le champ "Conséquence humaine" est requis.',
+            'interruption_processus.required' => 'Le champ "Interruption de processus" est requis.',
+            'risque_image.required' => 'Le champ "Risque d’image" est requis.',
+            'insatisfaction_client.required' => 'Le champ "Insatisfaction client" est requis.',
+            'impact_risque_credit.required' => 'Le champ "Impact risque crédit" est requis.',
+            'impact_risque_marche.required' => 'Le champ "Impact risque marché" est requis.',
+
+            // DMR
+            'description_DMR.required' => 'La description DMR est requise.',
+            'appreciation_DMR.required' => 'L’appréciation DMR est requise.',
+            'appreciation_DMR.in' => 'L’appréciation DMR sélectionnée est invalide.',
+
+            // Indicateurs
+            'indicateur_exposition.required' => 'L’indicateur d’exposition est requis.',
+            'indicateur_risque_survenu.required' => 'L’indicateur de risque survenu est requis.',
+            'indicateur_risque_avere.required' => 'L’indicateur de risque avéré est requis.',
+            'indicateur_risque_evite.required' => 'L’indicateur de risque évité est requis.',
+
+            // kri_choice
+            'kri_choice.required_if' => 'Le choix de l’indicateur KRI est requis si le risque est à piloter.',
+            'kri_existing.required_if' => 'Un indicateur existant est requis si vous avez choisi "sélectionner".',
+            // 'kri_existing.exists' => 'L’indicateur KRI sélectionné est invalide.',
+
+            // kri create fields
+            'kri_departement.required_if' => 'Le département de l’indicateur est requis.',
+            'kri_libelle.required_if' => 'Le libellé de l’indicateur est requis.',
+            'kri_type.required_if' => 'Le type de l’indicateur est requis.',
+            'kri_precision_indicateur.required_if' => 'La précision de l’indicateur est requise.',
+            'kri_source.required_if' => 'La source de l’indicateur est requise.',
+            'kri_chemin_access.required_if' => 'Le chemin d’accès à l’indicateur est requis.',
+            'kri_periodicite.required_if' => 'La périodicité de l’indicateur est requise.',
+            'kri_type_seuil.required_if' => 'Le type de seuil est requis.',
+            'kri_seuil_alerte.required_if' => 'Le seuil d’alerte est requis.',
+            'kri_valeur_actuelle.required_if' => 'La valeur actuelle est requise.',
+
+            // Plan d'action
+            'pa_choice.required_if' => 'Le choix du plan d’action est requis si une action de maîtrise est activée.',
+            'pa_type.required_if' => 'Le type de plan d’action est requis.',
+            'pa_priorite.required_if' => 'La priorité du plan d’action est requise.',
+            'pa_responsable.required_if' => 'Le responsable du plan d’action est requis.',
+            'pa_statut.required_if' => 'Le statut du plan d’action est requis.',
+            'pa_date_debut.required_if' => 'La date de début du plan d’action est requise.',
+            'pa_date_debut.date' => 'La date de début n’est pas valide.',
+            'pa_date_fin.required_if' => 'La date de fin du plan d’action est requise.',
+            'pa_date_fin.date' => 'La date de fin n’est pas valide.',
+            'pa_description.required_if' => 'La description du plan d’action est requise.',
+            'pa_existing.required_if' => 'Un plan d’action existant doit être sélectionné.',
+            // 'pa_existing.exists' => 'Le plan d’action sélectionné est invalide.',
+            'pa_date_debut.after_or_equal' => 'La date de début ne peut pas être dans le passé.',
+            'pa_date_fin.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+
+        ];
         $validated = $request->validate([
             'part_index' => 'required|string|max:255',
             'entite' => 'required|string|max:255',
@@ -73,31 +160,36 @@ class FicheRisqueController extends Controller
             'action_maitrise_risque' => 'required|boolean',
             'other_informations' => 'nullable|string',
 
-            'kri_departement' => 'nullable|string',
-            'kri_libelle' => 'nullable|string',
-            'kri_type' => 'nullable|string',
-            'kri_precision_indicateur' => 'nullable|string',
-            'kri_source' => 'nullable|string',
-            'kri_chemin_access' => 'nullable|string',
-            'kri_periodicite' => 'nullable|string',
-            'kri_type_seuil' => 'nullable|string',
-            'kri_seuil_alerte' => 'nullable|string',
-            'kri_valeur_actuelle' => 'nullable|string',
+            'kri_choice' => 'required_if:risque_a_piloter,1|string',
+            'kri_departement' => 'required_if:kri_choice,create|string',
+            'kri_libelle' => 'required_if:kri_choice,create|string',
+            'kri_type' => 'required_if:kri_choice,create|string',
+            'kri_precision_indicateur' => 'required_if:kri_choice,create|string',
+            'kri_source' => 'required_if:kri_choice,create|string',
+            'kri_chemin_access' => 'required_if:kri_choice,create|string',
+            'kri_periodicite' => 'required_if:kri_choice,create|string',
+            'kri_type_seuil' => 'required_if:kri_choice,create|string',
+            'kri_seuil_alerte' => 'required_if:kri_choice,create|string',
+            'kri_valeur_actuelle' => 'required_if:kri_choice,create|string',
             'kri_commentaire' => 'nullable|string',
-            'kri_existing' => 'nullable|exists:indicateurs,id',
+
+            'kri_existing' => 'required_if:kri_choice,select|nullable',
 
 
-            'pa_type' => 'nullable|string',
-            'pa_priorite' => 'nullable|string',
-            'pa_responsable' => 'nullable|string',
-            'pa_statut' => 'nullable|string',
-            'pa_date_debut' => 'nullable|date',
-            'pa_date_fin' => 'nullable|date',
-            'pa_description' => 'nullable|strings',
-            'pa_existing' => 'nullable|exists:plan_actions,id',
+            'pa_choice' => 'required_if:action_maitrise_risque,1|string',
+            'pa_type' => 'required_if:pa_choice,create_pa|string',
+            'pa_priorite' => 'required_if:pa_choice,create_pa|string',
+            'pa_responsable' => 'required_if:pa_choice,create_pa|string',
+            'pa_statut' => 'required_if:pa_choice,create_pa|string',
+            'pa_date_debut' => 'required_if:pa_choice,create_pa|date|after_or_equal:today',
+            'pa_date_fin' => 'required_if:pa_choice,create_pa|date|after_or_equal:pa_date_debut',
+            'pa_description' => 'required_if:pa_choice,create_pa|string',
+            'pa_existing' => 'required_if:pa_choice,select_pa|nullable',
 
 
-        ]);
+        ], $messages);
+
+
         $net_impact_value = $this->getNetImpactValue($request->appreciation_DMR, $request->brut_impact_value);
 
 
@@ -109,7 +201,7 @@ class FicheRisqueController extends Controller
             'departement' => $request->departement,
             'version' => $request->version,
             'entretiens' => $request->entretiens,
-            'index' => $this->getNextIndex($request->part_index),
+            'index' => $this->getNextRiskIndex($request->part_index),
             'ref_supp' => $request->ref_supp ?? null,
             'libelle_risk' => $request->libelle_risk,
             'category_id' => $request->category,
@@ -129,6 +221,10 @@ class FicheRisqueController extends Controller
             'net_cotation' => $this->getCotationFinale($this->getCotationFromValue($net_impact_value), $request->frequence),
             'echelle_risque' => $this->getCotationFinale($this->getCotationFromValue($net_impact_value), $request->frequence),
 
+            'indicateur_exposition' => $request->indicateur_exposition,
+            'indicateur_risque_survenu' => $request->indicateur_risque_survenu,
+            'indicateur_risque_avere' => $request->indicateur_risque_avere,
+            'indicateur_risque_evite' => $request->indicateur_risque_evite,
 
             'manque_a_gagner' => $request->boolean('manque_a_gagner'),
             'consequence_reglementaire' => $request->boolean('consequence_reglementaire'),
@@ -145,33 +241,68 @@ class FicheRisqueController extends Controller
 
             'risque_a_piloter' => $request->boolean('risque_a_piloter'),
             'action_maitrise_risque' => $request->boolean('action_maitrise_risque'),
-            'a_indicateur' => $request->boolean('risque_a_piloter'),
             'other_informations' => $request->other_informations ?? null,
         ]);
         if ($request->boolean('risque_a_piloter')) {
-            $indicateur = Indicateur::create([
-                'created_by' => Auth::id(),
-                'account_id' => Auth::user()->account->id,
-                'service_id' => $service->id,
-                'departement' => $request->kri_departement,
-                'index' => $this->getNextKriIndex($fiche->index),
-                'libelle' => $request->kri_libelle,
-                'type' => $request->kri_type,
-                'precision_indicateur' => $request->kri_precision_indicateur,
-                'source' => $request->kri_source,
-                'chemin_access' => $request->kri_chemin_access,
-                'periodicite' => $request->kri_periodicite,
-                'type_seuil' => $request->kri_type_seuil,
-                'valeur_actuelle' => $request->kri_valeur_actuelle,
-                'commentaire' => $request->kri_commentaire,
-                'date_maj_valeur' => now()->toDateString(),
-            ]);
+            if ($request->kri_choice == 'create') {
+                $indicateur = Indicateur::create([
+                    'created_by' => Auth::id(),
+                    'account_id' => Auth::user()->account->id,
+                    'service_id' => $service->id,
+                    'departement' => $request->kri_departement,
+                    'index' => $this->getNextKriIndex($fiche->index),
+                    'libelle' => $request->kri_libelle,
+                    'type' => $request->kri_type,
+                    'precision_indicateur' => $request->kri_precision_indicateur,
+                    'source' => $request->kri_source,
+                    'chemin_access' => $request->kri_chemin_access,
+                    'periodicite' => $request->kri_periodicite,
+                    'type_seuil' => $request->kri_type_seuil,
+                    'seuil_alerte' => (float) $request->kri_seuil_alerte,
+                    'valeur_actuelle' => (float)  $request->kri_valeur_actuelle,
+                    'commentaire' => $request->kri_commentaire,
+                    'date_maj_valeur' => now()->toDateString(),
+                ]);
+                $risk_indicateur = FicheRisqueIndicateur::create([
+                    'fiche_risque_id' => $fiche->id,
+                    'indicateur_id' => $indicateur->id
+                ]);
+            } elseif ($request->kri_choice == 'select') {
+                $risk_indicateur = FicheRisqueIndicateur::create([
+                    'fiche_risque_id' => $fiche->id,
+                    'indicateur_id' => $request->kri_existing
+                ]);
+            }
         }
 
-        return response()->json([
-            'message' => 'Fiche de risque créée avec succès',
-            'data' => $fiche
-        ], 201);
+        if ($request->boolean('action_maitrise_risque')) {
+            if ($request->pa_choice == 'create_pa') {
+                $plan_action = PlanAction::create([
+                    'created_by' => Auth::id(),
+                    'account_id' => Auth::user()->account->id,
+                    'service_id' => $service->id,
+                    'index' => $this->getNextPaIndex($fiche->index),
+                    'type' => $request->pa_type,
+                    'priorite' => $request->pa_priorite,
+                    'responsable' => $request->pa_responsable,
+                    'description' => $request->pa_description,
+                    'date_debut_prevue' => $request->pa_date_debut,
+                    'date_fin_prevue' => $request->pa_date_fin,
+                    'statut' => $request->pa_statut,
+                ]);
+                $risk_plan_action = FicheRisquePlanAction::create([
+                    'fiche_risque_id' => $fiche->id,
+                    'plan_action_id' => $plan_action->id
+                ]);
+            } elseif ($request->pa_choice == 'select_pa') {
+                $risk_plan_action = FicheRisquePlanAction::create([
+                    'fiche_risque_id' => $fiche->id,
+                    'plan_action_id' => $request->pa_existing
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Risque enregistré avec succès.');
     }
 
 
@@ -272,11 +403,11 @@ class FicheRisqueController extends Controller
 
         return 'Fréquence à renseigner';
     }
-    private function getRiskNextIndex(string $prefix): string
+    public function getNextRiskIndex(string $prefix): string
     {
         $last = DB::table('fiche_risques')
             ->where('index', 'like', $prefix . '-%')
-            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(index, '-', -1) AS UNSIGNED)) as last_number")
+            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(`index`, '-', -1) AS UNSIGNED)) as last_number")
             ->first();
 
         $nextNumber = ($last->last_number ?? 0) + 1;
@@ -287,22 +418,22 @@ class FicheRisqueController extends Controller
     {
         $last = DB::table('indicateurs')
             ->where('index', 'like', $prefix . '%')
-            ->selectRaw("MAX(CAST(REGEXP_SUBSTR(index, '[0-9]+$') AS UNSIGNED)) as last_number")
+            ->selectRaw("MAX(CAST(REGEXP_SUBSTR(`index`, '[0-9]+$') AS UNSIGNED)) as last_number")
             ->first();
 
         $nextNumber = ($last->last_number ?? 0) + 1;
 
-        return $prefix . $nextNumber;
+        return $prefix . '-IN-' . $nextNumber;
     }
     public function getNextPaIndex(string $prefix): string
     {
-        $last = DB::table('indicateurs')
+        $last = DB::table('plan_actions')
             ->where('index', 'like', $prefix . '%')
-            ->selectRaw("MAX(CAST(REGEXP_SUBSTR(index, '[0-9]+$') AS UNSIGNED)) as last_number")
+            ->selectRaw("MAX(CAST(REGEXP_SUBSTR(`index`, '[0-9]+$') AS UNSIGNED)) as last_number")
             ->first();
 
         $nextNumber = ($last->last_number ?? 0) + 1;
 
-        return $prefix . $nextNumber;
+        return $prefix . '-PA-' . $nextNumber;
     }
 }
