@@ -19,9 +19,9 @@ class FicheRisqueController extends Controller
     {
         $service = Service::where('uuid', $uuid)->first();
         $fiche_risques = $service->fiche_risques()->get();
-        return view('service_manager.pages.referentiel.index',[
-            'service'=> $service,
-            'fiche_risques'=> $fiche_risques,
+        return view('service_manager.pages.referentiel.index', [
+            'service' => $service,
+            'fiche_risques' => $fiche_risques,
         ]);
     }
 
@@ -40,6 +40,40 @@ class FicheRisqueController extends Controller
             'processus' => $processus,
             'causes' => $causes,
             'categories' => $categories,
+        ]);
+    }
+
+    public function edit_view($uuid, $id)
+    {
+        $service = Service::where('uuid', $uuid)->first();
+        $fiche_risque = FicheRisque::findOrFail($id);
+        $account = Auth::user()->account;
+        $processus = $account->processus()->get();
+        $causes = $account->causes()->get();
+        $categories = $account->categories()->get();
+        $macroprocessus = Macroprocessus::where('account_id', Auth::user()->account->id)->get();
+        return view('service_manager.pages.referentiel.edit', [
+            'service' => $service,
+            'fiche_risque' => $fiche_risque,
+            'macroprocessus' => $macroprocessus,
+            'processus' => $processus,
+            'causes' => $causes,
+            'categories' => $categories,
+        ]);
+    }
+    public function detail_view($uuid, $id)
+    {
+
+        $service = Service::where('uuid', $uuid)->first();
+        $fiche_risque = FicheRisque::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $account->id != $fiche_risque->creator->account->id) {
+            abort(403);
+        }
+
+        return view('service_manager.pages.fiche_risque.index', [
+            'service' => $service,
+            'fiche_risque' => $fiche_risque,
         ]);
     }
 
@@ -315,10 +349,236 @@ class FicheRisqueController extends Controller
         return redirect()->back()->with('success', 'Risque enregistré avec succès.');
     }
 
+    public function update(Request $request, $uuid, $id)
+    {
+        $service = Service::where('uuid', $uuid)->first();
+        $fiche_risque = FicheRisque::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $fiche_risque->created_by) {
+            abort(403);
+        }
+        $messages = [
+            // Champs simples
+            'index.required' => 'L’index est requis.',
+            'entite.required' => 'L’entité est requise.',
+            'departement.required' => 'Le département est requis.',
+            'version.required' => 'La version est requise.',
+            'entretiens.required' => 'Le champ des entretiens est requis.',
+            'ref_supp.string' => 'La référence supplémentaire doit être une chaîne de caractères.',
+            'libelle_risk.required' => 'Le libellé du risque est requis.',
+            'description.required' => 'La description est requise.',
+            'identified_by.required' => 'Le champ "Identifié par" est requis.',
+
+            // Relations
+            'category.exists' => 'La catégorie de risque sélectionnée est invalide.',
+            'macroprocessus.exists' => 'Le macroprocessus sélectionné est invalide.',
+            'processus.exists' => 'Le processus sélectionné est invalide.',
+            'cause_level_1.exists' => 'La cause niveau 1 est invalide.',
+            'cause_level_2.exists' => 'La cause niveau 2 est invalide.',
+            'cause_level_3.exists' => 'La cause niveau 3 est invalide.',
+
+            // Fréquence et impact
+            'frequence.required' => 'La fréquence est requise.',
+            'frequence.in' => 'La fréquence sélectionnée est invalide.',
+            'brut_impact_value.required' => 'La valeur d’impact brut est requise.',
+            'brut_impact_value.integer' => 'La valeur d’impact brut doit être un nombre entier.',
+
+            // Conséquences
+            'manque_a_gagner.required' => 'Le champ "Manque à gagner" est requis.',
+            'consequence_reglementaire.required' => 'Le champ "Conséquence réglementaire" est requis.',
+            'consequence_juridique.required' => 'Le champ "Conséquence juridique" est requis.',
+            'consequence_humaine.required' => 'Le champ "Conséquence humaine" est requis.',
+            'interruption_processus.required' => 'Le champ "Interruption de processus" est requis.',
+            'risque_image.required' => 'Le champ "Risque d’image" est requis.',
+            'insatisfaction_client.required' => 'Le champ "Insatisfaction client" est requis.',
+            'impact_risque_credit.required' => 'Le champ "Impact risque crédit" est requis.',
+            'impact_risque_marche.required' => 'Le champ "Impact risque marché" est requis.',
+
+            // DMR
+            'description_DMR.required' => 'La description DMR est requise.',
+            'appreciation_DMR.required' => 'L’appréciation DMR est requise.',
+            'appreciation_DMR.in' => 'L’appréciation DMR sélectionnée est invalide.',
+
+            // Indicateurs
+            'indicateur_exposition.required' => 'L’indicateur d’exposition est requis.',
+            'indicateur_risque_survenu.required' => 'L’indicateur de risque survenu est requis.',
+            'indicateur_risque_avere.required' => 'L’indicateur de risque avéré est requis.',
+            'indicateur_risque_evite.required' => 'L’indicateur de risque évité est requis.',
 
 
 
+        ];
+        $validated = $request->validate([
+            'index' => 'required|string|max:255',
+            'entite' => 'required|string|max:255',
+            'departement' => 'required|string|max:255',
+            'version' => 'required|string|max:50',
+            'entretiens' => 'required|string|max:255',
+            'ref_supp' => 'nullable|string|max:255',
+            'libelle_risk' => 'required|string|max:255',
+            'category' => 'required|exists:risk_categories,id',
+            'description' => 'required|string',
+            'macroprocessus' => 'required|exists:macroprocessuses,id',
+            'processus' => 'required|exists:processuses,id',
+            'identified_by' => 'required|string|max:255',
+            'cause_level_1' => 'required|exists:risk_causes,id',
+            'cause_level_2' => 'required|exists:risk_causes,id',
+            'cause_level_3' => 'required|exists:risk_causes,id',
 
+            'frequence' => 'required|in:EXTREMEMENT_RARE,RARE,PEU_FREQUENT,FREQUENT,TRES_FREQUENT,PERMANENT',
+            'brut_impact_value' => 'required|integer',
+
+            'manque_a_gagner' => 'required|boolean',
+            'consequence_reglementaire' => 'required|boolean',
+            'consequence_juridique' => 'required|boolean',
+            'consequence_humaine' => 'required|boolean',
+            'interruption_processus' => 'required|boolean',
+            'risque_image' => 'required|boolean',
+            'insatisfaction_client' => 'required|boolean',
+            'impact_risque_credit' => 'required|boolean',
+            'impact_risque_marche' => 'required|boolean',
+
+            'description_DMR' => 'required|string',
+            'appreciation_DMR' => 'required|in:INEXISTANT,ACCEPTABLE,INSUFFISANT,CONFORME,EFFICACE',
+            'risque_a_piloter' => 'required|boolean',
+
+            'indicateur_exposition' => 'required|integer',
+            'indicateur_risque_survenu' => 'required|integer',
+            'indicateur_risque_avere' => 'required|integer',
+            'indicateur_risque_evite' => 'required|integer',
+            'action_maitrise_risque' => 'required|boolean',
+            'other_informations' => 'nullable|string',
+            'indicateur.*' =>  'exists:indicateurs,id',
+            'pa.*' =>  'exists:plan_actions,id',
+        ], $messages);
+        $net_impact_value = $this->getNetImpactValue($request->appreciation_DMR, $request->brut_impact_value);
+
+        $fiche_risque->update([
+            'entite' => $request->entite,
+            'departement' => $request->departement,
+            'version' => $request->version,
+            'entretiens' => $request->entretiens,
+            'index' => $request->index,
+            'ref_supp' => $request->ref_supp ?? null,
+            'libelle_risk' => $request->libelle_risk,
+            'category_id' => $request->category,
+            'description' => $request->description,
+            'macroprocessus_id' => $request->macroprocessus,
+            'processus_id' => $request->processus,
+            'identified_by' => $request->identified_by,
+
+            'risk_cause' => json_encode(['level_1' => $request->cause_level_1, 'level_2' => $request->cause_level_2, 'level_3' => $request->cause_level_3]),
+
+            'frequence' => $request->frequence,
+            'brut_impact_value' => $request->brut_impact_value,
+            'net_impact_value' => $net_impact_value,
+            'net_impact' => $this->getCotationFromValue($net_impact_value),
+            'brut_impact' => $this->getCotationFromValue($request->brut_impact_value),
+            'brut_cotation' => $this->getCotationFinale($this->getCotationFromValue($request->brut_impact_value), $request->frequence),
+            'net_cotation' => $this->getCotationFinale($this->getCotationFromValue($net_impact_value), $request->frequence),
+            'echelle_risque' => $this->getCotationFinale($this->getCotationFromValue($net_impact_value), $request->frequence),
+
+            'indicateur_exposition' => $request->indicateur_exposition,
+            'indicateur_risque_survenu' => $request->indicateur_risque_survenu,
+            'indicateur_risque_avere' => $request->indicateur_risque_avere,
+            'indicateur_risque_evite' => $request->indicateur_risque_evite,
+
+            'manque_a_gagner' => $request->boolean('manque_a_gagner'),
+            'consequence_reglementaire' => $request->boolean('consequence_reglementaire'),
+            'consequence_juridique' => $request->boolean('consequence_juridique'),
+            'consequence_humaine' => $request->boolean('consequence_humaine'),
+            'interruption_processus' => $request->boolean('interruption_processus'),
+            'risque_image' => $request->boolean('risque_image'),
+            'insatisfaction_client' => $request->boolean('insatisfaction_client'),
+            'impact_risque_credit' => $request->boolean('impact_risque_credit'),
+            'impact_risque_marche' => $request->boolean('impact_risque_marche'),
+
+            'description_DMR' => $request->description_DMR,
+            'appreciation_DMR' => $request->appreciation_DMR,
+
+            'risque_a_piloter' => $request->boolean('risque_a_piloter'),
+            'action_maitrise_risque' => $request->boolean('action_maitrise_risque'),
+            'other_informations' => $request->other_informations ?? null,
+        ]);
+        if ($request->boolean('risque_a_piloter')) {
+
+            if ($request->indicateur) {
+                $currentIds = $fiche_risque->indicateurs()->pluck('indicateurs.id')->toArray();
+                $newIds = $request->input('indicateur', []);
+                $toDetach = array_diff($currentIds, $newIds);
+                $toAttach = array_diff($newIds, $currentIds);
+                if (!empty($toDetach)) {
+                    $fiche_risque->indicateurs()->detach($toDetach);
+                }
+                if (!empty($toAttach)) {
+                    $fiche_risque->indicateurs()->attach($toAttach);
+                }
+            }
+        } else {
+            $fiche_risque->indicateurs()->detach();
+        }
+
+
+        if ($request->boolean('action_maitrise_risque')) {
+            if ($request->pa) {
+                $currentIds = $fiche_risque->plan_actions()->pluck('plan_actions.id')->toArray();
+                $newIds = $request->input('pa', []);
+                $toDetach = array_diff($currentIds, $newIds);
+                $toAttach = array_diff($newIds, $currentIds);
+                if (!empty($toDetach)) {
+                    $fiche_risque->plan_actions()->detach($toDetach);
+                }
+                if (!empty($toAttach)) {
+                    $fiche_risque->plan_actions()->attach($toAttach);
+                }
+            }
+        } else {
+            $fiche_risque->plan_actions()->detach();
+        }
+
+        return redirect()->back()->with('success', 'Risque modifié avec succès.');
+    }
+
+
+    public function validateFicheRisque(Request $request, $uuid, $id)
+    {
+        $service = Service::where('uuid', $uuid)->first();
+        $fiche_risque = FicheRisque::findOrFail($id);
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && !Auth::user()->can('validate risk')) {
+            abort(403);
+        }
+        $fiche_risque->is_validated = true;
+        $fiche_risque->validated_by = Auth::id();
+        $fiche_risque->save();
+        return redirect()->back()->with('success', 'Risque validé avec succès.');
+    }
+
+
+    public function deleteFicheRisque($uuid, $id)
+    {
+        $service = Service::where('uuid', $uuid)->first();
+        $fiche_risque = FicheRisque::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $fiche_risque->created_by) {
+            abort(403);
+        }
+        foreach($fiche_risque->indicateurs()->get() as $indicateur)
+        {
+            $indicateur->index =null;
+            $indicateur->save();
+
+        }
+        $fiche_risque->indicateurs()->detach();
+         foreach($fiche_risque->plan_actions()->get() as $plan)
+        {
+            $plan->index =null;
+            $plan->save();
+
+        }
+        $fiche_risque->plan_actions()->detach();
+        $fiche_risque->delete();
+        return redirect()->back()->with('success', 'Risque supprimé avec succès.');
+    }
 
     private function getNetImpactValue($appeciation, $impact_brut)
     {

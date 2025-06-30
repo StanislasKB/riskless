@@ -51,4 +51,12 @@ class Account extends Model
             'id'                       // Clé locale sur le modèle Macroprocessus
         );
     }
+     public function indicateurs()
+    {
+        return $this->hasMany(Indicateur::class);
+    }
+     public function plan_actions()
+    {
+        return $this->hasMany(PlanAction::class);
+    }
 }

@@ -136,7 +136,7 @@
                                 </option>
                                 <option value="TRES_FREQUENT">Très fréquent : quelques fois par semaine (entre 51 et
                                     350 fois par an)</option>
-                                <option value="PERMANENT"> </option>
+                                <option value="PERMANENT">Permanent : quelques fois par jour (plus de 351 fois par an) </option>
 
                             </select>
                         </div>

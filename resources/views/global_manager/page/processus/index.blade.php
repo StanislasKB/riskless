@@ -9,7 +9,7 @@
     @include('global_manager.page.processus.layouts.list_processus')
 @endsection
 @section('page_js')
-     <script>
+    <script>
         $(document).ready(function() {
             const dataTableLangFr = {
                 "decimal": "",
@@ -35,13 +35,11 @@
                     "sortDescending": ": activer pour trier la colonne par ordre décroissant"
                 }
             };
-           
+
             $('#processus').DataTable({
-                scrollX: true,
+                scrollX : true,
                 language: dataTableLangFr
             });
-
         });
     </script>
-
 @endsection

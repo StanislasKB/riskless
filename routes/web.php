@@ -90,4 +90,10 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/referentiel', [FicheRisqueController::class,'index'])->name('fiche_risque.view');
     Route::get('/referentiel/risk/add', [FicheRisqueController::class,'form_view'])->name('add_fiche_risque.view');
     Route::post('/referentiel/risk/add', [FicheRisqueController::class,'store'])->name('add_fiche_risque.post');
+    Route::get('/referentiel/{id}/risk/validate', [FicheRisqueController::class,'validateFicheRisque'])->name('validate_fiche_risque.get');
+    Route::get('/referentiel/{id}/risk/edit', [FicheRisqueController::class,'edit_view'])->name('edit_fiche_risque.view');
+    Route::get('/referentiel/{id}/risk/delete', [FicheRisqueController::class,'deleteFicheRisque'])->name('delete_fiche_risque.view');
+    Route::post('/referentiel/{id}/risk/edit', [FicheRisqueController::class,'update'])->name('edit_fiche_risque.post');
+    Route::get('/{id}/risk', [FicheRisqueController::class,'detail_view'])->name('detail_fiche_risque.view');
+
 });
