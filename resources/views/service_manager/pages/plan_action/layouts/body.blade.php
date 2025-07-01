@@ -9,53 +9,6 @@
 
         </div>
         <hr />
-        <div class="table-responsive">
-            <table class="table table-striped mb-0">
-                <thead>
-                    <tr>
-                        <th>Source</th>
-                        <th>Visitors</th>
-                        <th>Bounce Rate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>(direct)</td>
-                        <td>56</td>
-                        <td>10%</td>
-                    </tr>
-                    <tr>
-                        <td>google</td>
-                        <td>29</td>
-                        <td>12%</td>
-                    </tr>
-                    <tr>
-                        <td>linkedin.com</td>
-                        <td>68</td>
-                        <td>33%</td>
-                    </tr>
-                    <tr>
-                        <td>bing</td>
-                        <td>14</td>
-                        <td>24%</td>
-                    </tr>
-                    <tr>
-                        <td>facebook.com</td>
-                        <td>87</td>
-                        <td>22%</td>
-                    </tr>
-                    <tr>
-                        <td>twitter.com</td>
-                        <td>88</td>
-                        <td>43%</td>
-                    </tr>
-                    <tr>
-                        <td>other</td>
-                        <td>98</td>
-                        <td>27%</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        @include('service_manager.pages.plan_action.layouts.plan_action_list')
     </div>
 </div>

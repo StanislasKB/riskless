@@ -7,22 +7,13 @@
     <link href="/admin/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
 @endsection
 @section('main_content')
-    @include('service_manager.pages.plan_action.layouts.add_action_modal')
-    @include('service_manager.pages.plan_action.layouts.header')
-    @include('service_manager.pages.plan_action.layouts.body')
+    @include('service_manager.pages.incident.layouts.add_incident_modal')
+    @include('service_manager.pages.incident.layouts.body')
 @endsection
 @section('page_js')
     <script src="/admin/assets/plugins/select2/js/select2.min.js"></script>
     <script>
-        // $('.single-select').select2({
-        //     theme: 'bootstrap4',
-        //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        //     placeholder: $(this).data('placeholder'),
-        //     allowClear: Boolean($(this).data('allow-clear')),
-
-        // });
-
-        $('#addActionModal').on('shown.bs.modal', function() {
+        $('#addIncidentModal').on('shown.bs.modal', function() {
             const selects = $(this).find('.single-select');
 
             selects.select2({
@@ -80,7 +71,7 @@
                 }
             };
 
-            $('#plan_list').DataTable({
+            $('#incident_list').DataTable({
                 scrollX: true,
                 language: dataTableLangFr
 
