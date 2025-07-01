@@ -3,7 +3,16 @@
     Dashboard - {{ $service->name }}
 @endsection
 @section('page_css')
+<style>
+    .dataTables_wrapper .dataTables_scrollBody {
+    overflow: visible !important; /* ou at least overflow-y: visible */
+}
 
+table.dataTable tbody td {
+    overflow: visible;
+}
+
+</style>
 @endsection
 @section('main_content')
     @include('service_manager.pages.referentiel.layouts.page_header')
@@ -38,8 +47,16 @@
             };
            
             $('#risk_list').DataTable({
-                  scrollX: true,
-                language: dataTableLangFr
+                language: dataTableLangFr,
+                  columnDefs: [
+        { targets: 0, width: "80px" },   // Index
+        { targets: 1, width: "150px" },  // Libellé
+        { targets: 2, width: "250px" },  // Description
+        { targets: 3, width: "150px" },  // Département
+        { targets: 4, width: "120px" },  // Statut
+        { targets: 5, width: "60px" }    // Actions
+    ]
+
                 
             });
 

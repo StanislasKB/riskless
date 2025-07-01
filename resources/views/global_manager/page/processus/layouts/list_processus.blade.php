@@ -93,23 +93,27 @@
                                         <div class="font-weight-bold">{{ $process->creator->username }}</div>
                                     </td>
 
-                                    <td>
+                                    <td class="position-relative">
                                         @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $process->creator->id != Auth::id)
                                             -
                                         @else
-                                            <a class="btn split-bg-primary" data-bs-toggle="dropdown"> <i
-                                                    class='bx bx-dots-horizontal-rounded font-24 '></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> <a
-                                                    class="dropdown-item"
-                                                    href="{{ route('global.update_processus.view', ['id' => $process->id]) }}">
-                                                    Modifier
+                                            <div class="dropdown">
+
+
+                                                <a class="btn split-bg-primary" data-bs-toggle="dropdown" data-bs-auto-close="outside"> <i
+                                                        class='bx bx-dots-horizontal-rounded font-24 '></i>
                                                 </a>
+                                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end" style="z-index: 999"> <a
+                                                        class="dropdown-item"
+                                                        href="{{ route('global.update_processus.view', ['id' => $process->id]) }}">
+                                                        Modifier
+                                                    </a>
 
 
-                                                <a class="dropdown-item"
-                                                    href="{{ route('global.delete_processus.post', ['id' => $process->id]) }}">Supprimer</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('global.delete_processus.post', ['id' => $process->id]) }}">Supprimer</a>
 
+                                                </div>
                                             </div>
                                         @endif
 

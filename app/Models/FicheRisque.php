@@ -90,33 +90,28 @@ class FicheRisque extends Model
         return $this->belongsTo(Processus::class);
     }
 
-    public function scopeValidated($query)
+    public function indicateurs()
     {
-        return $query->where('is_validated', true);
+        return $this->belongsToMany(Indicateur::class, 'fiche_risque_indicateurs');
+    }
+    public function plan_actions()
+    {
+        return $this->belongsToMany(PlanAction::class, 'fiche_risque_plan_actions');
     }
 
-    public function scopeByAccount($query, $accountId)
+    public function getCauseLevelOneAttribute(): ?RiskCause
     {
-        return $query->where('account_id', $accountId);
+        $causeId = json_decode($this->risk_cause, true)['level_1'] ?? null;
+        return $causeId ? RiskCause::find($causeId) : null;
     }
-
-    public function scopeRiskToPilot($query)
+    public function getCauseLevelTwoAttribute(): ?RiskCause
     {
-        return $query->where('risque_a_piloter', true);
+        $causeId = json_decode($this->risk_cause, true)['level_2'] ?? null;
+        return $causeId ? RiskCause::find($causeId) : null;
     }
-
-    public function scopeWithImpacts($query)
+    public function getCauseLevelThreeAttribute(): ?RiskCause
     {
-        return $query->where(function ($q) {
-            $q->where('manque_a_gagner', true)
-                ->orWhere('consequence_reglementataire', true)
-                ->orWhere('consequence_juridique', true)
-                ->orWhere('consequence_humaine', true)
-                ->orWhere('interruption_processus', true)
-                ->orWhere('risque_image', true)
-                ->orWhere('insatisfaction_client', true)
-                ->orWhere('impact_risque_credit', true)
-                ->orWhere('impact_risque_marche', true);
-        });
+        $causeId = json_decode($this->risk_cause, true)['level_3'] ?? null;
+        return $causeId ? RiskCause::find($causeId) : null;
     }
 }

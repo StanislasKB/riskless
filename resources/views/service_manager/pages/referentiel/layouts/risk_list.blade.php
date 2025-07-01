@@ -1,4 +1,14 @@
 <div class="card">
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+
+    @foreach ($errors->all() as $error)
+        <div class="alert alert-danger" role="alert">{{ $error }}</div>
+    @endforeach
     <div class="card-body">
         <div class="card-title">
             <h4 class="mb-0">Liste des risques</h4>
@@ -32,40 +42,35 @@
 
 
                             <td>
-                                @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $fiche_risque->creator->id != Auth::id)
+                                @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $fiche_risque->creator->account->id != Auth::user()->account->id)
                                     -
                                 @else
-                                    <a class="btn split-bg-primary" data-bs-toggle="dropdown"> <i
-                                            class='bx bx-dots-horizontal-rounded font-24 '></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end"> 
-                                         <a class="dropdown-item"
-                                            href="{{ route('global.delete_processus.post', ['id' => $fiche_risque->id]) }}">Détails</a>
-                                         <a class="dropdown-item"
-                                            href="{{ route('global.delete_processus.post', ['id' => $fiche_risque->id]) }}">Valider</a>
-                                        
-                                        <a class="dropdown-item"
-                                            href="{{ route('global.update_processus.view', ['id' => $fiche_risque->id]) }}">
-                                            Modifier
+                                    <div class="dropdown dropstart position-static">
+                                        <a class="btn split-bg-primary" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="bx bx-dots-horizontal-rounded font-24"></i>
                                         </a>
-
-                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item"
-                                            href="{{ route('global.delete_processus.post', ['id' => $fiche_risque->id]) }}">Supprimer</a>
-
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('service.detail_fiche_risque.view', ['id' => $fiche_risque->id,'uuid'=>$service->uuid]) }}">Détails</a></li>
+                                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('owner') || $fiche_risque->creator->id == Auth::id)
+                                            <li><a class="dropdown-item" href="{{ route('service.edit_fiche_risque.view', ['id' => $fiche_risque->id,'uuid'=>$service->uuid]) }}">Modifier</a></li>
+                                            <li><a class="dropdown-item text-danger" href="{{ route('service.delete_fiche_risque.view',['id' => $fiche_risque->id,'uuid'=>$service->uuid]) }}">Supprimer</a></li>
+                                            @endif
+                                            
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('owner') || Auth::user()->can('validate risk'))
+                                            <li><a class="dropdown-item" href="{{ route('service.validate_fiche_risque.get', ['id' => $fiche_risque->id,'uuid'=>$service->uuid]) }}">Valider</a></li>
+                                            @endif
+                                        </ul>
                                     </div>
                                 @endif
 
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="100%">
-                                <h4>Aucun risque actuellement</h4>
-                            </td>
-                        </tr>
                     @endforelse
-
 
                 </tbody>
             </table>
