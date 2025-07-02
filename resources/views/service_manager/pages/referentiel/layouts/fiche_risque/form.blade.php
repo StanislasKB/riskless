@@ -167,6 +167,7 @@
                         <div class="col-md-6">
                             <label for="consequence_juridique" class="form-label">Conséquences juridiques</label>
                             <select class="form-select" id="consequence_juridique" name="consequence_juridique" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>
@@ -175,6 +176,7 @@
                             <label for="consequence_humaine" class="form-label">Conséquences humaines et
                                 sociales</label>
                             <select class="form-select" id="consequence_humaine" name="consequence_humaine" required>
+                                <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
                             </select>

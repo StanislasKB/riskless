@@ -5,6 +5,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
+use App\Http\Controllers\MatriceController;
 use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
 use App\Http\Controllers\ServiceController;
@@ -95,5 +96,7 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/referentiel/{id}/risk/delete', [FicheRisqueController::class,'deleteFicheRisque'])->name('delete_fiche_risque.view');
     Route::post('/referentiel/{id}/risk/edit', [FicheRisqueController::class,'update'])->name('edit_fiche_risque.post');
     Route::get('/{id}/risk', [FicheRisqueController::class,'detail_view'])->name('detail_fiche_risque.view');
+
+    Route::get('/matrice', [MatriceController::class,'index'])->name('matrice.view');
 
 });
