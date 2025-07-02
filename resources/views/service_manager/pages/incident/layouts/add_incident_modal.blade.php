@@ -1,37 +1,37 @@
-<div class="modal fade" id="addActionModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addIncidentModal" tabindex="-1" aria-hidden="true">
 
-    <form action="{{ route('service.plan-actions.store',['uuid'=>$service->uuid ]) }}" method="post" class="modal-dialog modal-dialog-centered">
+    <form action="{{ route('service.incident.store',['uuid'=>$service->uuid ]) }}" method="post" class="modal-dialog modal-dialog-centered">
         @csrf
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Nouveau plan d'action</h5>
+                <h5 class="modal-title">Nouveau incident</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
                 <div class="mb-3">
-                    <label class="form-label">Type d'action</label>
+                    <label class="form-label">Type d'incident</label>
                     <input class="form-control mb-1 @error('type') is-invalid @enderror" type="text"
-                        placeholder="Type d'action" name="type" value="{{ old('type') }}">
+                        placeholder="Type d'incident" name="type" value="{{ old('type') }}">
                     @error('type')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Priorité</label>
-                    <input class="form-control mb-1 @error('priorite') is-invalid @enderror" type="text"
-                        placeholder="Priorité" name="priorite" value="{{ old('priorite') }}">
-                    @error('priorite')
+                    <label class="form-label">Libellé</label>
+                    <input class="form-control mb-1 @error('libelle') is-invalid @enderror" type="text"
+                        placeholder="Libellé" name="libelle" value="{{ old('libelle') }}">
+                    @error('libelle')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Responsable</label>
-                    <input class="form-control mb-1 @error('responsable') is-invalid @enderror" type="text"
-                        placeholder="Responsable" name="responsable" value="{{ old('responsable') }}">
-                    @error('responsable')
+                    <label class="form-label">Fréquence susceptible</label>
+                    <input class="form-control mb-1 @error('frequence_susceptible') is-invalid @enderror" type="text"
+                        placeholder="Fréquence susceptible" name="frequence_susceptible" value="{{ old('frequence_susceptible') }}">
+                    @error('frequence_susceptible')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -46,24 +46,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Date de début prévue</label>
-                    <input class="form-control mb-1 @error('date_debut_prevue') is-invalid @enderror"
-                        type="datetime-local" placeholder="Date de début prévue" name="date_debut_prevue"
-                        value="{{ old('date_debut_prevue') }}">
-                    @error('date_debut_prevue')
+                    <label class="form-label">Identifié  par</label>
+                    <input class="form-control mb-1 @error('identifie_par') is-invalid @enderror" type="text"
+                        placeholder="Identifié par" name="identifie_par" value="{{ old('identifie_par') }}">
+                    @error('identifie_par')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Date de fin prévue</label>
-                    <input class="form-control mb-1 @error('date_fin_prevue') is-invalid @enderror"
-                        type="datetime-local" placeholder="Date de fin prévue" name="date_fin_prevue"
-                        value="{{ old('date_fin_prevue') }}">
-                    @error('date_fin_prevue')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
 
                 <div class="mb-3">
                     <label class="form-label">Sélectionne le fiche de risque</label>

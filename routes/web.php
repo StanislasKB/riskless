@@ -5,6 +5,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
+use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\MatriceController;
 use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
@@ -87,7 +88,17 @@ Route::prefix('/global')->name('global.')->group(function () {
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/dashboard', [ServiceDashboardController::class,'index'])->name('dashboard.view');
+    // plan actions
     Route::get('/plan-actions', [PlanActionController::class,'index'])->name('plan_actions.view');
+    Route::post('/plan-actions/create', [PlanActionController::class,'store'])->name('plan-actions.store');
+    Route::put('/plan-actions/{planId}/update', [PlanActionController::class,'update'])->name('plan-actions.update');
+    Route::delete('/plan-actions/{planId}/delete', [PlanActionController::class,'destroy'])->name('plan-actions.delete');
+    // incidents
+    Route::get('/incidents', [IncidentController::class,'index'])->name('incident.view');
+    Route::post('/incidents/create', [IncidentController::class,'store'])->name('incident.store');
+    Route::put('/incidents/{incidentId}/update', [IncidentController::class,'update'])->name('incident.update');
+    Route::delete('/incidents/{incidentId}/delete', [IncidentController::class,'destroy'])->name('incident.delete');
+
     Route::get('/referentiel', [FicheRisqueController::class,'index'])->name('fiche_risque.view');
     Route::get('/referentiel/risk/add', [FicheRisqueController::class,'form_view'])->name('add_fiche_risque.view');
     Route::post('/referentiel/risk/add', [FicheRisqueController::class,'store'])->name('add_fiche_risque.post');
