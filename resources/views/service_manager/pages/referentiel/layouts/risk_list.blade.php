@@ -39,7 +39,7 @@
                                 @else
                                     <span class="badge bg-warning">En attente</span>
                                 @endif
-
+                            </td>
 
                             <td>
                                 @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $fiche_risque->creator->account->id != Auth::user()->account->id)

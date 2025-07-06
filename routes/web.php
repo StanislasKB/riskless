@@ -6,6 +6,7 @@ use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\IndicateurController;
 use App\Http\Controllers\MatriceController;
 use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
@@ -110,4 +111,13 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
 
     Route::get('/matrice', [MatriceController::class,'index'])->name('matrice.view');
 
+    //  indicateurs 
+    Route::get('/indicateurs', [IndicateurController::class,'index'])->name('indicateurs.view');
+    Route::get('/indicateurs/{id}/detail', [IndicateurController::class,'details_view'])->name('detail_indicateur.view');
+    Route::get('/indicateurs/{id}/edit', [IndicateurController::class,'edit_view'])->name('edit_indicateur.view');
+    Route::post('/indicateurs/{id}/edit', [IndicateurController::class,'update'])->name('edit_indicateur.post');
+    Route::post('/indicateurs/{id}/update-evolution', [IndicateurController::class,'evolution'])->name('evolution_indicateur.post');
+    Route::get('/indicateurs/{id}/delete', [IndicateurController::class,'delete'])->name('delete_indicateur.view');
+    Route::get('/indicateurs/add', [IndicateurController::class,'add_view'])->name('add_indicateur.view');
+    Route::post('/indicateurs/add', [IndicateurController::class,'store'])->name('add_indicateur.post');
 });

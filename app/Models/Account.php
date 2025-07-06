@@ -51,12 +51,46 @@ class Account extends Model
             'id'                       // Clé locale sur le modèle Macroprocessus
         );
     }
-     public function indicateurs()
+     public function fiche_risques()
+    {
+        return $this->hasMany(FicheRisque::class);
+    }
+    public function indicateurs()
     {
         return $this->hasMany(Indicateur::class);
     }
-     public function plan_actions()
+    public function plan_actions()
     {
         return $this->hasMany(PlanAction::class);
+    }
+
+    public function indicateursNonLies()
+    {
+        return $this->hasMany(Indicateur::class)
+            ->whereDoesntHave('fiche_risques');
+    }
+    public function planActionsNonLies()
+    {
+        return $this->hasMany(PlanAction::class)
+            ->whereDoesntHave('fiche_risques');
+    }
+
+    public function planActionsDisponibles($ficheId = null)
+    {
+        return $this->plan_actions()
+            ->whereDoesntHave('fiche_risques', function ($query) use ($ficheId) {
+                if ($ficheId) {
+                    $query->where('fiche_risque_id', '!=', $ficheId);
+                }
+            })->get();
+    }
+    public function indicateursDisponibles($ficheId = null)
+    {
+        return $this->indicateurs()
+            ->whereDoesntHave('fiche_risques', function ($query) use ($ficheId) {
+                if ($ficheId) {
+                    $query->where('fiche_risque_id', '!=', $ficheId);
+                }
+            })->get();
     }
 }

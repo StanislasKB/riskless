@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Indicateur extends Model
 {
-   protected $fillable = [
+    protected $fillable = [
         'account_id',
         'created_by',
         'service_id',
@@ -23,6 +23,16 @@ class Indicateur extends Model
         'valeur_actuelle',
         'date_maj_valeur',
         'commentaire',
-        
+
     ];
+
+    public function fiche_risques()
+    {
+        return $this->belongsToMany(FicheRisque::class, 'fiche_risque_indicateurs');
+    }
+
+    public function evolutions()
+    {
+        return $this->hasMany(EvolutionIndicateur::class,'indicateur_id');
+    }
 }

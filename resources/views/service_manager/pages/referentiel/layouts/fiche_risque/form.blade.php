@@ -15,7 +15,9 @@
             @endforeach
             <div class="card-body">
                 <div class="p-4 border rounded">
-                    <form class="row g-3" action="{{ route('service.add_fiche_risque.post', ['uuid' => $service->uuid]) }}" method="POST">
+                    <form class="row g-3"
+                        action="{{ route('service.add_fiche_risque.post', ['uuid' => $service->uuid]) }}"
+                        method="POST">
                         @csrf
                         <div class="col-md-4">
                             <label for="part_index" class="form-label">Partie fixe index</label>
@@ -45,7 +47,8 @@
                         <h5>Risque métier</h5>
                         <div class="col-md-6">
                             <label for="libelle_risk" class="form-label">Libellé</label>
-                            <input type="text" class="form-control" id="validationCustom02" name="libelle_risk" required>
+                            <input type="text" class="form-control" id="validationCustom02" name="libelle_risk"
+                                required>
                         </div>
                         <div class="col-md-6">
                             <label for="category" class="form-label">Catégorie du risque</label>
@@ -91,9 +94,9 @@
                             <select class="form-select" id="cause_level_1" name="cause_level_1" required>
                                 <option selected disabled>Choisissez la cause de niveau 1</option>
                                 @foreach ($causes as $cause)
-                                @if ($cause->level==1)
-                                    <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
-                                @endif
+                                    @if ($cause->level == 1)
+                                        <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
+                                    @endif
                                 @endforeach
 
                             </select>
@@ -103,9 +106,9 @@
                             <select class="form-select" id="cause_level_2" name="cause_level_2" required>
                                 <option selected disabled>Choisissez la cause de niveau 2</option>
                                 @foreach ($causes as $cause)
-                                @if ($cause->level==2)
-                                    <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
-                                @endif
+                                    @if ($cause->level == 2)
+                                        <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
+                                    @endif
                                 @endforeach
 
                             </select>
@@ -113,11 +116,11 @@
                         <div class="col-md-6">
                             <label for="cause_level_3" class="form-label">Niveau 3</label>
                             <select class="form-select" id="cause_level_3" name="cause_level_3" required>
-                                 <option selected disabled>Choisissez la cause de niveau 3</option>
+                                <option selected disabled>Choisissez la cause de niveau 3</option>
                                 @foreach ($causes as $cause)
-                                @if ($cause->level==3)
-                                    <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
-                                @endif
+                                    @if ($cause->level == 3)
+                                        <option value="{{ $cause->id }}"> {{ $cause->libelle }} </option>
+                                    @endif
                                 @endforeach
 
                             </select>
@@ -136,7 +139,8 @@
                                 </option>
                                 <option value="TRES_FREQUENT">Très fréquent : quelques fois par semaine (entre 51 et
                                     350 fois par an)</option>
-                                <option value="PERMANENT">Permanent : quelques fois par jour (plus de 351 fois par an) </option>
+                                <option value="PERMANENT">Permanent : quelques fois par jour (plus de 351 fois par an)
+                                </option>
 
                             </select>
                         </div>
@@ -147,7 +151,7 @@
                                 required name="brut_impact_value">
                         </div>
 
-                       
+
                         <div class="col-md-6">
                             <label for="manque_a_gagner" class="form-label">Manque à gagner</label>
                             <select class="form-select" id="manque_a_gagner" name="manque_a_gagner" required>
@@ -157,8 +161,10 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="consequence_reglementaire" class="form-label">Conséquences réglémentaires</label>
-                            <select class="form-select" id="consequence_reglementaire" name="consequence_reglementaire" required>
+                            <label for="consequence_reglementaire" class="form-label">Conséquences
+                                réglémentaires</label>
+                            <select class="form-select" id="consequence_reglementaire"
+                                name="consequence_reglementaire" required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -166,7 +172,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="consequence_juridique" class="form-label">Conséquences juridiques</label>
-                            <select class="form-select" id="consequence_juridique" name="consequence_juridique" required>
+                            <select class="form-select" id="consequence_juridique" name="consequence_juridique"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -183,7 +190,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="interruption_processus" class="form-label">Interruption de processus</label>
-                            <select class="form-select" id="interruption_processus" name="interruption_processus" required>
+                            <select class="form-select" id="interruption_processus" name="interruption_processus"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -199,7 +207,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="insatisfaction_client" class="form-label">Insatisfaction client</label>
-                            <select class="form-select" id="insatisfaction_client" name="insatisfaction_client" required>
+                            <select class="form-select" id="insatisfaction_client" name="insatisfaction_client"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -207,7 +216,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="impact_risque_credit" class="form-label">Impact risque de crédit</label>
-                            <select class="form-select" id="impact_risque_credit" name="impact_risque_credit" required>
+                            <select class="form-select" id="impact_risque_credit" name="impact_risque_credit"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -215,7 +225,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="impact_risque_marche" class="form-label">Impact risque de marché</label>
-                            <select class="form-select" id="impact_risque_marche" name="impact_risque_marche" required>
+                            <select class="form-select" id="impact_risque_marche" name="impact_risque_marche"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -247,17 +258,20 @@
                                 required name="indicateur_exposition">
                         </div>
                         <div class="col-md-6">
-                            <label for="indicateur_risque_survenu" class="form-label">Indicateurs de risque survenu</label>
+                            <label for="indicateur_risque_survenu" class="form-label">Indicateurs de risque
+                                survenu</label>
                             <input type="number" min="0" class="form-control" id="indicateur_risque_survenu"
                                 required name="indicateur_risque_survenu">
                         </div>
                         <div class="col-md-6">
-                            <label for="indicateur_risque_avere" class="form-label">Indicateurs de risque avéré</label>
+                            <label for="indicateur_risque_avere" class="form-label">Indicateurs de risque
+                                avéré</label>
                             <input type="number" min="0" class="form-control" id="indicateur_risque_avere"
                                 required name="indicateur_risque_avere">
                         </div>
                         <div class="col-md-6">
-                            <label for="indicateur_risque_evite" class="form-label">Indicateurs de risque évité</label>
+                            <label for="indicateur_risque_evite" class="form-label">Indicateurs de risque
+                                évité</label>
                             <input type="number" min="0" class="form-control" id="indicateur_risque_evite"
                                 required name="indicateur_risque_evite">
                         </div>
@@ -274,7 +288,9 @@
                             <select class="form-select" id="validationSelectKRI" name="kri_choice">
                                 <option value="">-- Choisir une option --</option>
                                 <option value="create">Créer un nouveau</option>
+                                @if ($service->indicateursNonLies()->exists())
                                 <option value="select">Sélectionner un indicateur risque</option>
+                                @endif
                             </select>
                         </div>
                         <div id="kri-create-form" style="display: none;" class="mt-3 col-md-12">
@@ -287,23 +303,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_libelle" class="form-label">Libellé</label>
-                                    <input type="text" class="form-control" id="kri_libelle"
-                                        name="kri_libelle">
+                                    <input type="text" class="form-control" id="kri_libelle" name="kri_libelle">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_type" class="form-label">Type</label>
-                                    <input type="text" class="form-control" id="kri_type"
-                                        name="kri_type">
+                                    <input type="text" class="form-control" id="kri_type" name="kri_type">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="kri_precision_indicateur" class="form-label">Précisions indicateur</label>
+                                    <label for="kri_precision_indicateur" class="form-label">Précisions
+                                        indicateur</label>
                                     <input type="text" class="form-control" id="kri_precision_indicateur"
                                         name="kri_precision_indicateur">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_source" class="form-label">Source</label>
-                                    <input type="text" class="form-control" id="kri_source"
-                                        name="kri_source">
+                                    <input type="text" class="form-control" id="kri_source" name="kri_source">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_chemin_access" class="form-label">Chemin d'accès</label>
@@ -322,12 +336,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_seuil_alerte" class="form-label">Seuil d'alerte</label>
-                                    <input type="text" class="form-control" id="kri_seuil_alerte"
+                                    <input type="number" step="0.01" class="form-control" id="kri_seuil_alerte"
                                         name="kri_seuil_alerte">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kri_valeur_actuelle" class="form-label">Valeur actuelle</label>
-                                    <input type="text" class="form-control" id="kri_valeur_actuelle"
+                                    <input type="number" step="0.01" class="form-control" id="kri_valeur_actuelle"
                                         name="kri_valeur_actuelle">
                                 </div>
                                 <div class="col-md-12">
@@ -341,16 +355,19 @@
                         <div id="kri-select-field" style="display: none;" class="mt-3">
                             <label for="existingKRI" class="form-label">Choisir un indicateur (KRI) existant</label>
                             <select class="form-select" id="existingKRI" name="kri_existing">
-                                <option value="kri1">Indicateur 1</option>
-                                <option value="kri2">Indicateur 2</option>
+                                @foreach ($service->indicateursNonLies()->get() as $kri)
+                                    <option value="{{ $kri->id }}">{{ $kri->libelle }}</option>
+                                @endforeach
                             </select>
                         </div>
 
                         <h5>Plan de réductions des risques</h5>
 
                         <div class="col-md-6">
-                            <label for="action_maitrise_risque" class="form-label">Action de maîtrise de risques</label>
-                            <select class="form-select" id="action_maitrise_risque" name="action_maitrise_risque" required>
+                            <label for="action_maitrise_risque" class="form-label">Action de maîtrise de
+                                risques</label>
+                            <select class="form-select" id="action_maitrise_risque" name="action_maitrise_risque"
+                                required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="1">Oui</option>
                                 <option value="0">Non</option>
@@ -361,7 +378,10 @@
                             <select class="form-select" id="validationSelectPA" name="pa_choice" required>
                                 <option value="">-- Choisir une option --</option>
                                 <option value="create_pa">Créer un nouveau</option>
+                                @if ($service->planActionsNonLies()->exists())
                                 <option value="select_pa">Sélectionner un plan d'action</option>
+                                    
+                                @endif
                             </select>
                         </div>
                         <div id="pa-create-form" style="display: none;" class="mt-3 col-md-12">
@@ -370,7 +390,7 @@
                                 <div class="col-md-6">
                                     <label for="pa_type" class="form-label">Type de plan d'action</label>
                                     <select class="form-select" id="pa_type" name="pa_type">
-                                         <option selected disabled>Choisissez le type</option>
+                                        <option selected disabled>Choisissez le type</option>
                                         <option value="Atténuation">Atténuation</option>
                                         <option value="Prévention">Prévention</option>
                                         <option value="Atténuation et Prévention"> Atténuation et Prévention</option>
@@ -379,7 +399,7 @@
                                 <div class="col-md-6">
                                     <label for="pa_priorite" class="form-label">Priorité</label>
                                     <select class="form-select" id="pa_priorite" name="pa_priorite">
-                                         <option selected disabled>Choisissez le niveau de priorité</option>
+                                        <option selected disabled>Choisissez le niveau de priorité</option>
                                         <option value="Forte">Forte</option>
                                         <option value="Moyenne">Moyenne</option>
                                         <option value="Faible">Faible</option>
@@ -390,10 +410,10 @@
                                     <input type="text" class="form-control" id="pa_responsable"
                                         name="pa_responsable">
                                 </div>
-                                 <div class="col-md-6">
+                                <div class="col-md-6">
                                     <label for="pa_statut" class="form-label">Statut</label>
                                     <select class="form-select" id="pa_statut" name="pa_statut">
-                                         <option selected disabled>Choisissez le statut</option>
+                                        <option selected disabled>Choisissez le statut</option>
                                         <option value="A_LANCER">A lancer</option>
                                         <option value="PLANIFIER">Planifié</option>
                                         <option value="EN_COURS">En cours</option>
@@ -408,10 +428,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="pa_date_fin" class="form-label">Date de fin prévue</label>
-                                    <input type="date" class="form-control" id="pa_date_fin"
-                                        name="pa_date_fin">
+                                    <input type="date" class="form-control" id="pa_date_fin" name="pa_date_fin">
                                 </div>
-                                
+
                                 <div class="col-md-12">
                                     <label for="pa_description" class="form-label">Description</label>
                                     <textarea class="form-control" name="pa_description" id="pa_description" cols="30" rows="5"></textarea>
@@ -423,8 +442,9 @@
                         <div id="pa-select-field" style="display: none;" class="mt-3">
                             <label for="existingPA" class="form-label">Choisir un plan d'action existant</label>
                             <select class="form-select" id="existingPA" name="pa_existing">
-                                <option value="kri1">Indicateur 1</option>
-                                <option value="kri2">Indicateur 2</option>
+                                 @foreach ($service->planActionsNonLies()->get() as $pa)
+                                    <option value="{{ $pa->id }}">{{ \Illuminate\Support\Str::limit($pa->description, 50) }}</option>
+                                @endforeach
                             </select>
                         </div>
 

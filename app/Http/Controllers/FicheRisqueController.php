@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EvolutionIndicateur;
 use App\Models\FicheRisque;
 use App\Models\FicheRisqueIndicateur;
 use App\Models\FicheRisquePlanAction;
@@ -9,6 +10,7 @@ use App\Models\Indicateur;
 use App\Models\Macroprocessus;
 use App\Models\PlanAction;
 use App\Models\Service;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -213,21 +215,21 @@ class FicheRisqueController extends Controller
             'kri_chemin_access' => 'required_if:kri_choice,create|string',
             'kri_periodicite' => 'required_if:kri_choice,create|string',
             'kri_type_seuil' => 'required_if:kri_choice,create|string',
-            'kri_seuil_alerte' => 'required_if:kri_choice,create|string',
-            'kri_valeur_actuelle' => 'required_if:kri_choice,create|string',
+            'kri_seuil_alerte' => 'required_if:kri_choice,create',
+            'kri_valeur_actuelle' => 'required_if:kri_choice,create',
             'kri_commentaire' => 'nullable|string',
 
             'kri_existing' => 'required_if:kri_choice,select|nullable',
 
 
-            'pa_choice' => 'required_if:action_maitrise_risque,1|string',
-            'pa_type' => 'required_if:pa_choice,create_pa|string',
-            'pa_priorite' => 'required_if:pa_choice,create_pa|string',
-            'pa_responsable' => 'required_if:pa_choice,create_pa|string',
-            'pa_statut' => 'required_if:pa_choice,create_pa|string',
-            'pa_date_debut' => 'required_if:pa_choice,create_pa|date|after_or_equal:today',
-            'pa_date_fin' => 'required_if:pa_choice,create_pa|date|after_or_equal:pa_date_debut',
-            'pa_description' => 'required_if:pa_choice,create_pa|string',
+            'pa_choice' => 'required_if:action_maitrise_risque,1|string|nullable',
+            'pa_type' => 'required_if:pa_choice,create_pa|string|nullable',
+            'pa_priorite' => 'required_if:pa_choice,create_pa|string|nullable',
+            'pa_responsable' => 'required_if:pa_choice,create_pa|string|nullable',
+            'pa_statut' => 'required_if:pa_choice,create_pa|string|nullable',
+            'pa_date_debut' => 'required_if:pa_choice,create_pa|date|after_or_equal:today|nullable',
+            'pa_date_fin' => 'required_if:pa_choice,create_pa|date|after_or_equal:pa_date_debut|nullable',
+            'pa_description' => 'required_if:pa_choice,create_pa|string|nullable',
             'pa_existing' => 'required_if:pa_choice,select_pa|nullable',
 
 
@@ -311,11 +313,22 @@ class FicheRisqueController extends Controller
                     'fiche_risque_id' => $fiche->id,
                     'indicateur_id' => $indicateur->id
                 ]);
+                $evolution = EvolutionIndicateur::create([
+                    'created_by' => Auth::id(),
+                    'indicateur_id' => $indicateur->id,
+                    'valeur' => (float)  $request->kri_valeur_actuelle,
+                    'annee' => Carbon::now()->year,
+                    'mois' => Carbon::now()->month,
+
+                ]);
             } elseif ($request->kri_choice == 'select') {
+                $indicateur = Indicateur::findOrFail($request->kri_existing);
                 $risk_indicateur = FicheRisqueIndicateur::create([
                     'fiche_risque_id' => $fiche->id,
-                    'indicateur_id' => $request->kri_existing
+                    'indicateur_id' => $indicateur->id
                 ]);
+                $indicateur->index = $this->getNextKriIndex($fiche->index);
+                $indicateur->save();
             }
         }
 
@@ -339,10 +352,13 @@ class FicheRisqueController extends Controller
                     'plan_action_id' => $plan_action->id
                 ]);
             } elseif ($request->pa_choice == 'select_pa') {
+                $plan_action = PlanAction::findOrFail($request->pa_existing);
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
-                    'plan_action_id' => $request->pa_existing
+                    'plan_action_id' => $plan_action->id
                 ]);
+                $plan_action->index = $this->getNextPaIndex($fiche->index);
+                $plan_action->save();
             }
         }
 
@@ -509,9 +525,19 @@ class FicheRisqueController extends Controller
                 $toAttach = array_diff($newIds, $currentIds);
                 if (!empty($toDetach)) {
                     $fiche_risque->indicateurs()->detach($toDetach);
+                    foreach ($toDetach as $id) {
+                        $indicateur = Indicateur::findOrFail($id);
+                        $indicateur->index = null;
+                        $indicateur->save();
+                    }
                 }
                 if (!empty($toAttach)) {
                     $fiche_risque->indicateurs()->attach($toAttach);
+                    foreach ($toAttach as $id) {
+                        $indicateur = Indicateur::findOrFail($id);
+                        $indicateur->index = $this->getNextKriIndex($fiche_risque->index);
+                        $indicateur->save();
+                    }
                 }
             }
         } else {
@@ -527,9 +553,19 @@ class FicheRisqueController extends Controller
                 $toAttach = array_diff($newIds, $currentIds);
                 if (!empty($toDetach)) {
                     $fiche_risque->plan_actions()->detach($toDetach);
+                    foreach ($toDetach as $id) {
+                        $plan_action = PlanAction::findOrFail($id);
+                        $plan_action->index = null;
+                        $plan_action->save();
+                    }
                 }
                 if (!empty($toAttach)) {
                     $fiche_risque->plan_actions()->attach($toAttach);
+                    foreach ($toAttach as $id) {
+                        $plan_action = PlanAction::findOrFail($id);
+                        $plan_action->index = $this->getNextPaIndex($fiche_risque->index);
+                        $plan_action->save();
+                    }
                 }
             }
         } else {
@@ -562,18 +598,14 @@ class FicheRisqueController extends Controller
         if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $fiche_risque->created_by) {
             abort(403);
         }
-        foreach($fiche_risque->indicateurs()->get() as $indicateur)
-        {
-            $indicateur->index =null;
+        foreach ($fiche_risque->indicateurs()->get() as $indicateur) {
+            $indicateur->index = null;
             $indicateur->save();
-
         }
         $fiche_risque->indicateurs()->detach();
-         foreach($fiche_risque->plan_actions()->get() as $plan)
-        {
-            $plan->index =null;
+        foreach ($fiche_risque->plan_actions()->get() as $plan) {
+            $plan->index = null;
             $plan->save();
-
         }
         $fiche_risque->plan_actions()->detach();
         $fiche_risque->delete();
