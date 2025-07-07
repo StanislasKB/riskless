@@ -1,5 +1,6 @@
 <div class="modal fade" id="updateProfil" tabindex="-1" aria-hidden="true">
-    <form action="{{ route('global.update_profil_img.post') }}" method="post" enctype="multipart/form-data" class="modal-dialog modal-dialog-centered">
+    <form action="{{ route('global.update_profil_img.post') }}" method="post" enctype="multipart/form-data"
+        class="modal-dialog modal-dialog-centered">
         @csrf
         <div class="modal-content">
             <div class="modal-header">
@@ -9,8 +10,8 @@
             <div class="modal-body">
 
                 <div>
-                   <label for="formFile" class="form-label">Choisir l'image</label>
-										<input class="form-control" type="file" id="formFile" accept="image/*" name="profil_img">
+                    <label for="formFile" class="form-label">Choisir l'image</label>
+                    <input class="form-control" type="file" id="formFile" accept="image/*" name="profil_img">
                 </div>
 
             </div>

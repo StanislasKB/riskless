@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
+use App\Http\Controllers\FormationController;
 use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\GrapheController;
 use App\Http\Controllers\IncidentController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\IndicateurController;
 use App\Http\Controllers\MatriceController;
 use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
+use App\Http\Controllers\QuizzController;
+use App\Http\Controllers\QuizzResponseController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceDashboardController;
 use App\Http\Controllers\UserController;
@@ -86,6 +89,37 @@ Route::prefix('/global')->name('global.')->group(function () {
     Route::post('/processus/{id}/update', [ProcessusController::class,'update'])->name('update_processus.post');
     Route::get('/processus/{id}/delete', [ProcessusController::class,'destroy'])->name('delete_processus.post');
     Route::post('/processus/add', [ProcessusController::class,'store'])->name('add_processus.post');
+
+
+     // Formation
+    Route::prefix('/formations')->name('formation.')->group( function () {
+        Route::get('/list', [FormationController::class,'index'])->name('list.view');
+        Route::get('/add', [FormationController::class,'add_view'])->name('add.view');
+        Route::get('/update/{id}', [FormationController::class,'update_view'])->name('update.view');
+        Route::post('/update/{id}', [FormationController::class,'update'])->name('update.post');
+        Route::post('/add', [FormationController::class,'add'])->name('add.post');
+        Route::get('/delete/{id}', [FormationController::class,'delete'])->name('delete');
+
+        });
+    Route::prefix('/quizz')->name('quizz.')->group( function () {
+        Route::get('/list', [QuizzController::class,'index'])->name('list.view');
+        Route::get('/add', [QuizzController::class,'add_view'])->name('add.view');
+        Route::get('/update/{id}', [QuizzController::class,'update_view'])->name('update.view');
+        Route::post('/update/{id}', [QuizzController::class,'update'])->name('update.post');
+        Route::post('/add', [QuizzController::class,'add'])->name('add.post');
+        Route::get('/delete/{id}', [QuizzController::class,'delete'])->name('delete');
+
+        });
+    Route::prefix('/quizz-responses')->name('responses.')->group( function () {
+        Route::get('/list', [QuizzResponseController::class,'index'])->name('list.view');
+        // Route::get('/add', [QuizzController::class,'add_view'])->name('add.view')->middleware('auth');
+        // Route::get('/update/{id}', [QuizzController::class,'update_view'])->name('update.view')->middleware('auth');
+        // Route::post('/update/{id}', [QuizzController::class,'update'])->name('update.post')->middleware('auth');
+        Route::post('/add/{id}', [QuizzResponseController::class,'submit_response'])->name('add.post');
+        Route::post('/score/{id}', [QuizzResponseController::class,'submit_score'])->name('score.post');
+        // Route::get('/delete/{id}', [QuizzController::class,'delete'])->name('delete')->middleware('auth');
+
+        });
 });
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
@@ -122,4 +156,5 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/indicateurs/add', [IndicateurController::class,'add_view'])->name('add_indicateur.view');
     Route::post('/indicateurs/add', [IndicateurController::class,'store'])->name('add_indicateur.post');
     Route::get('/indicateurs/{id}/graphe', [GrapheController::class,'graphe_indicateur'])->name('graphe_indicateur.view');
+
 });
