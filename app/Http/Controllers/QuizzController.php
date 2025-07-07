@@ -12,7 +12,7 @@ class QuizzController extends Controller
     public function index()
     {
         $quizzs = Quizz::all();
-        return view('dashboard.pages.quizz.index', compact('quizzs'));
+        return view('global_manager.page.quizz.index', compact('quizzs'));
     }
     public function add_view()
     {
@@ -20,7 +20,7 @@ class QuizzController extends Controller
             abort(403);
         }
         $formations = Formation::where('created_by', Auth::id())->get();
-        return view('dashboard.pages.quizz.add', compact('formations'));
+        return view('global_manager.page.quizz.create', compact('formations'));
     }
     public function add(Request $request)
     {
@@ -29,6 +29,7 @@ class QuizzController extends Controller
         }
         $request->validate([
             'title' => 'required',
+            'description' => 'required',
             'status' => ['required', 'in:ACTIVE,INACTIVE'],
             'visibility' => ['required', 'in:ALL,ONLY_MEMBERS'],
             'quizz_img' => ['file', 'mimes:jpeg,png,jpg', 'max:2048'],
@@ -39,6 +40,7 @@ class QuizzController extends Controller
             : null;
         $quizz = Quizz::create([
             'title' => $request->title,
+            'description' => $request->description,
             'status' => $request->status,
             'visibility' => $request->visibility,
             'account_id' => Auth::user()->account->id,
@@ -56,7 +58,7 @@ class QuizzController extends Controller
         $quizz = Quizz::findOrFail($id);
         if (Auth::id() == $quizz->creator->id) {
             $formations = Formation::where('created_by', Auth::id())->get();
-            return view('dashboard.pages.quizz.update', compact('formations', 'quizz'));
+            return view('global_manager.page.quizz.edit', compact('formations', 'quizz'));
         } else {
             abort(403);
         }
@@ -68,6 +70,7 @@ class QuizzController extends Controller
         if (Auth::id() == $quizz->creator->id) {
             $request->validate([
                 'title' => 'required',
+                'description' => 'required',
                 'status' => ['required', 'in:ACTIVE,INACTIVE'],
                 'visibility' => ['required', 'in:ALL,ONLY_MEMBERS'],
                 'formation_img' => ['file', 'mimes:jpeg,png,jpg', 'max:2048'],
@@ -77,6 +80,9 @@ class QuizzController extends Controller
 
             if ($request->has('title')) {
                 $updateData['title'] = $request->title;
+            }
+            if ($request->has('description')) {
+                $updateData['description'] = $request->description;
             }
             if ($request->has('status')) {
                 $updateData['status'] = $request->status;
