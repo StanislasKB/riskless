@@ -319,14 +319,21 @@
                             <label for="validationSelectKRI" class="form-label">Indicateur risque (KRI)</label>
                             <select class="multiple-select-kri" multiple="multiple" id="validationSelectKRI"
                                 name="indicateur[]">
-                                @php
-                                    $selectedIds = $fiche_risque->indicateurs()->pluck('indicateurs.id')->toArray();
+
+                                 @php
+                                    $selectedIds  = $fiche_risque
+                                        ->indicateurs()
+                                        ->pluck('indicateurs.id')
+                                        ->toArray();
+                                    $availableIds = $service->indicateursDisponibles(
+                                        $fiche_risque->id,
+                                    );
                                 @endphp
 
-                                @foreach (Auth::user()->account->indicateurs as $ind)
-                                    <option value="{{ $ind->id }}"
-                                        @if (in_array($ind->id, $selectedIds)) selected @endif>
-                                        {{ $ind->libelle }}
+                                @foreach ($availableIds as $kri)
+                                    <option value="{{ $kri->id }}"
+                                        @if (in_array($kri->id, $selectedIds)) selected @endif>
+                                          {{ $kri->libelle }}
                                     </option>
                                 @endforeach
                             </select>
@@ -353,13 +360,19 @@
                             <select class="multiple-select-pa" multiple="multiple" id="validationSelectPA"
                                 name="pa[]">
                                 @php
-                                $selectedPlanActionIds = $fiche_risque->plan_actions()->pluck('plan_actions.id')->toArray();
+                                    $selectedPlanActionIds = $fiche_risque
+                                        ->plan_actions()
+                                        ->pluck('plan_actions.id')
+                                        ->toArray();
+                                    $availablePlanActions = $service->planActionsDisponibles(
+                                        $fiche_risque->id,
+                                    );
                                 @endphp
 
-                                @foreach (Auth::user()->account->plan_actions as $pa)
+                                @foreach ($availablePlanActions as $pa)
                                     <option value="{{ $pa->id }}"
                                         @if (in_array($pa->id, $selectedPlanActionIds)) selected @endif>
-                                     {{ \Illuminate\Support\Str::limit($pa->description, 50) }} 
+                                        {{ \Illuminate\Support\Str::limit($pa->description, 50) }}
                                     </option>
                                 @endforeach
                             </select>

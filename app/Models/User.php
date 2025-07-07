@@ -91,4 +91,20 @@ class User extends Authenticatable
         $setting = $this->notificationSettingFor($typeCode);
         return $setting ? $setting->enabled : true;
     }
+
+      public function quizzs()
+    {
+        return $this->hasMany(Quizz::class,'user_id');
+    }
+
+
+    public function quizzResponses()
+    {
+        return $this->hasManyThrough(
+            QuizzResponse::class, // Modèle final
+            Quizz::class,         // Modèle intermédiaire
+            'user_id',            // Clé étrangère dans la table quizz (indiquant le créateur)
+            'quizz_id'            // Clé étrangère dans la table quizzresponse
+        );
+    }
 }

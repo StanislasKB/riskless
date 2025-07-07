@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('plan_action_id')->constrained('plan_actions')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->unsignedTinyInteger('mois');
+             $table->unsignedSmallInteger('annee');
             $table->enum('statut', ['A_LANCER','PLANIFIER', 'EN_COURS', 'TERMINER', 'ANNULER','PAUSE'])->default('A_LANCER');
             $table->integer('reste_a_faire')->nullable();
             $table->text('commentaire')->nullable();

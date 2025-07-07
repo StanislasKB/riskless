@@ -21,4 +21,13 @@ class PlanAction extends Model
         'progression',
         
     ];
+
+     public function fiche_risques()
+    {
+        return $this->belongsToMany(FicheRisque::class, 'fiche_risque_plan_actions');
+    }
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
