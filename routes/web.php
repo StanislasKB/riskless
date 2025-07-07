@@ -5,6 +5,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\FicheRisqueController;
 use App\Http\Controllers\GlobalDashboardController;
+use App\Http\Controllers\GrapheController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IndicateurController;
 use App\Http\Controllers\MatriceController;
@@ -120,4 +121,5 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/indicateurs/{id}/delete', [IndicateurController::class,'delete'])->name('delete_indicateur.view');
     Route::get('/indicateurs/add', [IndicateurController::class,'add_view'])->name('add_indicateur.view');
     Route::post('/indicateurs/add', [IndicateurController::class,'store'])->name('add_indicateur.post');
+    Route::get('/indicateurs/{id}/graphe', [GrapheController::class,'graphe_indicateur'])->name('graphe_indicateur.view');
 });

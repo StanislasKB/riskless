@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AvancementPlanAction;
 use App\Models\EvolutionIndicateur;
 use App\Models\FicheRisque;
 use App\Models\FicheRisqueIndicateur;
@@ -346,16 +347,26 @@ class FicheRisqueController extends Controller
                     'date_debut_prevue' => $request->pa_date_debut,
                     'date_fin_prevue' => $request->pa_date_fin,
                     'statut' => $request->pa_statut,
+                    'progression' => 0,
                 ]);
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
-                    'plan_action_id' => $plan_action->id
+                    'plan_action_id' => $plan_action->id,
+                    
+                ]);
+                $avancement = AvancementPlanAction::create([
+                    'created_by' => Auth::id(),
+                    'plan_action_id' => $plan_action->id,
+                    'annee' => Carbon::now()->year,
+                    'mois' => Carbon::now()->month,
+                    'reste_a_faire' => 100,
                 ]);
             } elseif ($request->pa_choice == 'select_pa') {
                 $plan_action = PlanAction::findOrFail($request->pa_existing);
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
-                    'plan_action_id' => $plan_action->id
+                    'plan_action_id' => $plan_action->id,
+                    
                 ]);
                 $plan_action->index = $this->getNextPaIndex($fiche->index);
                 $plan_action->save();

@@ -83,6 +83,9 @@
                                                         data-bs-target="#evolution-{{ $indicateur->id }}"
                                                         href="#">Ajouter</a>
                                                 </li>
+                                                <li><a class="dropdown-item"
+                                                        href="{{ route('service.graphe_indicateur.view',['id' => $indicateur->id, 'uuid' => $service->uuid]) }}">Graphe</a>
+                                                </li>
                                             @endif
                                         </ul>
                                     </div>

@@ -35,8 +35,12 @@ class IndicateurController extends Controller
     public function details_view($uuid, $id)
     {
         $service = Service::where('uuid', $uuid)->first();
-        $indicateur =Indicateur::findOrFail($id);
-         return view('service_manager.pages.indicateur.details', [
+        $indicateur = Indicateur::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $account->id != $indicateur->creator->account->id) {
+            abort(403);
+        }
+        return view('service_manager.pages.indicateur.details', [
             'service' => $service,
             'indicateur' => $indicateur,
         ]);
@@ -44,8 +48,12 @@ class IndicateurController extends Controller
     public function edit_view($uuid, $id)
     {
         $service = Service::where('uuid', $uuid)->first();
-        $indicateur =Indicateur::findOrFail($id);
-         return view('service_manager.pages.indicateur.edit', [
+        $indicateur = Indicateur::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $account->id != $indicateur->creator->account->id) {
+            abort(403);
+        }
+        return view('service_manager.pages.indicateur.edit', [
             'service' => $service,
             'indicateur' => $indicateur,
         ]);
@@ -121,11 +129,11 @@ class IndicateurController extends Controller
         return redirect()->back()->with('success', 'Indicateur enregistré avec succès.');
     }
 
-    public function update(Request $request, $uuid,$id)
+    public function update(Request $request, $uuid, $id)
     {
         $service = Service::where('uuid', $uuid)->first();
-        $indicateur =Indicateur::findOrFail($id);
-         $messages = [
+        $indicateur = Indicateur::findOrFail($id);
+        $messages = [
             'kri_departement.required' => 'Le département de l’indicateur est requis.',
             'kri_libelle.required' => 'Le libellé de l’indicateur est requis.',
             'kri_type.required' => 'Le type de l’indicateur est requis.',
@@ -164,49 +172,50 @@ class IndicateurController extends Controller
             'seuil_alerte' => (float) $request->kri_seuil_alerte,
             'commentaire' => $request->kri_commentaire,
         ]);
-       if ($indicateur->valeur_actuelle!=$request->kri_valeur_actuelle) {
-         $indicateur->update([
-            'valeur_actuelle' => (float)  $request->kri_valeur_actuelle,
-            'date_maj_valeur' => now()->toDateString(),
-        ]);
-        $evolution = $indicateur->evolutions()->latest()->first();
-        $evolution->valeur=$request->kri_valeur_actuelle;
-         $evolution->save();
-       }
+        if ($indicateur->valeur_actuelle != $request->kri_valeur_actuelle) {
+            $indicateur->update([
+                'valeur_actuelle' => (float)  $request->kri_valeur_actuelle,
+                'date_maj_valeur' => now()->toDateString(),
+            ]);
+            $evolution = $indicateur->evolutions()->latest()->first();
+            $evolution->valeur = $request->kri_valeur_actuelle;
+            $evolution->save();
+        }
 
         return redirect()->back()->with('success', 'Indicateur modifié avec succès.');
-
     }
 
     public function delete($uuid, $id)
     {
         $service = Service::where('uuid', $uuid)->first();
-        $indicateur =Indicateur::findOrFail($id);
-        if($indicateur->fiche_risques()->exists())
-        {
+        $indicateur = Indicateur::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $account->id != $indicateur->creator->account->id) {
+            abort(403);
+        }
+        if ($indicateur->fiche_risques()->exists()) {
             return redirect()->back()->withErrors(['error'  => "Impossible de supprimer : cet indicateur risque est lié à un risque."]);
         }
         $indicateur->evolutions()->delete();
         $indicateur->delete();
         return redirect()->back()->with('success', 'Indicateur supprimé avec succès.');
-
     }
 
 
-    public function evolution(Request $request,$uuid, $id)
+    public function evolution(Request $request, $uuid, $id)
     {
         $service = Service::where('uuid', $uuid)->first();
-        $indicateur =Indicateur::findOrFail($id);
+        $indicateur = Indicateur::findOrFail($id);
         $validated = $request->validate([
-          
+
             'valeur_actuelle' => 'required',
 
         ]);
-         $indicateur->update([
+        $indicateur->update([
             'valeur_actuelle' => (float)  $request->valeur_actuelle,
             'date_maj_valeur' => now()->toDateString(),
         ]);
-         $evolution = EvolutionIndicateur::create([
+        $evolution = EvolutionIndicateur::create([
             'created_by' => Auth::id(),
             'indicateur_id' => $indicateur->id,
             'valeur' => (float)  $request->valeur_actuelle,
@@ -214,7 +223,7 @@ class IndicateurController extends Controller
             'mois' => Carbon::now()->month,
         ]);
 
-         return redirect()->back()->with('success', 'Nouvelle valeur ajoutée pour un indicateur.');
+        return redirect()->back()->with('success', 'Nouvelle valeur ajoutée pour un indicateur.');
     }
 
 

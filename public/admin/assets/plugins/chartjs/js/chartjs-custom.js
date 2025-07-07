@@ -1,63 +1,52 @@
 $(function () {
 	"use strict";
 	// chart 1
-	var ctx = document.getElementById('chart1').getContext('2d');
-	var myChart = new Chart(ctx, {
-		type: 'line',
-		data: {
-			labels: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-			datasets: [{
-				label: 'Google',
-				data: [13, 20, 4, 18, 7, 4, 8],
-				backgroundColor: "transparent",
-				borderColor: "#673ab7",
-				pointRadius: "0",
-				borderWidth: 4
-			}, {
-				label: 'Facebook',
-				data: [3, 30, 6, 6, 3, 4, 11],
-				backgroundColor: "transparent",
-				borderColor: "#32ab13",
-				pointRadius: "0",
-				borderWidth: 4
-			}]
-		},
-		options: {
-			maintainAspectRatio: false,
+const canvas = document.getElementById("chart1");
+const ctx = canvas.getContext("2d");
+const raw = canvas.getAttribute("data-graphe");
+const chartData = JSON.parse(raw);
+
+new Chart(ctx, {
+	type: 'bar', // base type, mais chaque dataset peut être différent
+	data: {
+		labels: chartData.labels,
+		datasets: chartData.datasets
+	},
+	options: {
+		maintainAspectRatio: false,
+		plugins: {
 			legend: {
 				display: true,
 				labels: {
-					fontColor: '#585757',
-					boxWidth: 40
+					filter: function (legendItem, data) {
+						// Affiche seulement une légende "Valeur mesurée" (barres) et "Seuil d'alerte" (ligne)
+						const label = legendItem.text;
+						return label === "Valeur mesurée" || label === "Seuil d'alerte";
+					}
 				}
 			},
-			tooltips: {
-				enabled: false
+			title: {
+				display: true,
+				text: "Évolution mensuelle vs Seuil d'alerte"
+			}
+		},
+		scales: {
+			x: {
+				title: {
+					display: true,
+					text: "Mois"
+				}
 			},
-			scales: {
-				xAxes: [{
-					ticks: {
-						beginAtZero: true,
-						fontColor: '#585757'
-					},
-					gridLines: {
-						display: true,
-						color: "rgba(0, 0, 0, 0.07)"
-					},
-				}],
-				yAxes: [{
-					ticks: {
-						beginAtZero: true,
-						fontColor: '#585757'
-					},
-					gridLines: {
-						display: true,
-						color: "rgba(0, 0, 0, 0.07)"
-					},
-				}]
+			y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: "Valeur"
+				}
 			}
 		}
-	});
+	}
+});
 	// chart 2
 	var ctx = document.getElementById("chart2").getContext('2d');
 	var myChart = new Chart(ctx, {

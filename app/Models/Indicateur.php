@@ -35,4 +35,8 @@ class Indicateur extends Model
     {
         return $this->hasMany(EvolutionIndicateur::class,'indicateur_id');
     }
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
