@@ -99,8 +99,8 @@ Route::prefix('/global')->name('global.')->group(function () {
         Route::post('/update/{id}', [FormationController::class,'update'])->name('update.post');
         Route::post('/add', [FormationController::class,'add'])->name('add.post');
         Route::get('/delete/{id}', [FormationController::class,'delete'])->name('delete');
-
         });
+    // Quizz
     Route::prefix('/quizz')->name('quizz.')->group( function () {
         Route::get('/list', [QuizzController::class,'index'])->name('list.view');
         Route::get('/add', [QuizzController::class,'add_view'])->name('add.view');
@@ -108,14 +108,17 @@ Route::prefix('/global')->name('global.')->group(function () {
         Route::post('/update/{id}', [QuizzController::class,'update'])->name('update.post');
         Route::post('/add', [QuizzController::class,'add'])->name('add.post');
         Route::get('/delete/{id}', [QuizzController::class,'delete'])->name('delete');
-
         });
+    // Responses
     Route::prefix('/quizz-responses')->name('responses.')->group( function () {
         Route::get('/list', [QuizzResponseController::class,'index'])->name('list.view');
         Route::post('/add/{id}', [QuizzResponseController::class,'submit_response'])->name('add.post');
         Route::post('/score/{id}', [QuizzResponseController::class,'submit_score'])->name('score.post');
-
         });
+
+       // Referentiel 
+       Route::get('/referentiel', [GlobalDashboardController::class,'referentiel'])->name('referentiel.view');
+       Route::get('/referentiel/{id}/risk', [GlobalDashboardController::class,'detail_view'])->name('detail.referentiel.view');
 });
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FicheRisque;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GlobalDashboardController extends Controller
 {
@@ -10,4 +12,26 @@ class GlobalDashboardController extends Controller
     {
         return view('global_manager.page.dashboard.index');
     }
+    public function referentiel()
+    {
+        $fiche_risques=Auth::user()->account->fiche_risques()->where('is_validated',true)->get();
+        return view('global_manager.page.referentiel.index',[
+            'fiche_risques' => $fiche_risques,
+        ]);
+    }
+
+      public function detail_view($id)
+    {
+
+        $fiche_risque = FicheRisque::findOrFail($id);
+        $account = Auth::user()->account;
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $account->id != $fiche_risque->creator->account->id) {
+            abort(403);
+        }
+
+        return view('global_manager.page.referentiel.detail', [
+            'fiche_risque' => $fiche_risque,
+        ]);
+    }
+    
 }

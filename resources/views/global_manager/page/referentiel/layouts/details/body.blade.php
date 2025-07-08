@@ -61,7 +61,7 @@
             </div>
             <div class="col-md-4">
                 <span class="mb-4 fw-bold">Service </span>
-                <div class="mt-2">{{ $service->name }}</div>
+                <div class="mt-2">{{$fiche_risque->service->name }}</div>
             </div>
             <hr>
             <h5>Validation</h5>
@@ -199,7 +199,6 @@
                         @default
                     @endswitch
                 </div>
-
             </div>
             <div class="col-md-4">
                 <span class="mb-4 fw-bold">Manque à gagner </span>
@@ -265,7 +264,7 @@
                     @endswitch
                 </div>
             </div>
-             <div class="col-md-4">
+            <div class="col-md-4">
                 <span class="mb-4 fw-bold">Cotation brut  </span>
                 <div class="mt-2">
                     @switch($fiche_risque->brut_cotation)
