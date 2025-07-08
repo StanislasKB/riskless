@@ -10,26 +10,18 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PlanActionAlertMail extends Mailable implements ShouldQueue
+class AlerteRetardPAMail extends Mailable
 {
     use Queueable, SerializesModels;
+protected $pa, $username;
 
-    public $planAction;
-    public $username;
-   
     /**
      * Create a new message instance.
-     *
-     * @param  \\App\\Models\\PlanAction  $planAction
-     * @param  string  $serviceName
-     * @param  string  $recipientName
-     * @param  string  $actionUrl
      */
-    public function __construct(PlanAction $planAction, $username)
+    public function __construct(PlanAction $pa, $username)
     {
-        $this->planAction   = $planAction;
-        $this->username  = $username;
-        
+        $this->pa =$pa;
+        $this->username =$username;
     }
 
     /**
@@ -38,7 +30,7 @@ class PlanActionAlertMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Un nouveau plan d\'action a été ajouté ' ,
+            subject: 'Alerte Retard d\'un plan d\'action',
         );
     }
 
@@ -48,18 +40,18 @@ class PlanActionAlertMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.plan_action.alert',
-            with: [
-                'plan_action'   => $this->planAction,
-                'username'  => $this->username,
-            ],
+            view: 'mails.notifications.alerte_retard_pa_mail',
+            with :[
+                'plan_action'=>$this->pa,
+                'username'=>$this->username,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \\Illuminate\\Mail\\Mailables\\Attachment>
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

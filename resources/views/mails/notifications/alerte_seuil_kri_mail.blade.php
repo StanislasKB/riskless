@@ -112,16 +112,15 @@
         <div class="content">
             <p>Bonjour {{ $username }}, </p>
             
-            <p>Nous vous informons qu’un nouveau plan d'action a été ajouté dans l’application de gestion des risques le {{ $plan_action->created_at->format('d/m/Y') }}.</p>
+            <p>Nous vous informons qu’après la mise à jour récente, un indicateur clé de risque (KRI) a dépassé le seuil défini dans le système de gestion des risques.</p>
             
-            <h3>Détails du plan action : </h3>
-            <p>Index : {{ $plan_action->index ?? 'Aucun risque associé' }}</p>
-            <p>Service : {{ $plan_action->service->name }}</p>
-            <p>Type: {{ $plan_action->type }}</p>
-            <p>Priorité: {{ $plan_action->priorite }}</p>
-            <p>Ce plan d'action a été enregistré par {{ $plan_action->creator->username }}.</p>
-            
-            
+            <h3>Détails de l’alerte : </h3>
+            <p>Libellé : {{ $indicateur->libelle }}</p>
+            <p>Service : {{ $indicateur->service->name }}</p>
+            <p>Seuil d'alerte de tolérance : {{ $indicateur->seuil_alerte }}</p>
+            <p>Valeur actuelle : {{ $indicateur->valeur_actuelle }}</p>
+            <p>Date de mise à jour : {{ Carbon\Carbon::parse($indicateur->date_maj_valeur)->format('d/m/Y')  }}</p>
+            <p>Cette situation requiert une attention particulière et une évaluation rapide des mesures à prendre.</p>
             <p>Vous pouvez consulter les détails et suivre les actions associées directement via l'espace de gestion</p>
            
             

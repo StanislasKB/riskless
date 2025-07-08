@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\PlanAction;
+use App\Models\Indicateur;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -10,35 +10,26 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PlanActionAlertMail extends Mailable implements ShouldQueue
+class AlerteSeuilKriMail extends Mailable
 {
     use Queueable, SerializesModels;
+   protected $kri, $username;
 
-    public $planAction;
-    public $username;
-   
     /**
      * Create a new message instance.
-     *
-     * @param  \\App\\Models\\PlanAction  $planAction
-     * @param  string  $serviceName
-     * @param  string  $recipientName
-     * @param  string  $actionUrl
      */
-    public function __construct(PlanAction $planAction, $username)
+    public function __construct(Indicateur $kri, $username)
     {
-        $this->planAction   = $planAction;
-        $this->username  = $username;
-        
+        $this->kri =$kri;
+        $this->username =$username;
     }
-
     /**
      * Get the message envelope.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Un nouveau plan d\'action a été ajouté ' ,
+            subject: 'Le seuil d\'un indicateur de risque a été dépassé',
         );
     }
 
@@ -48,18 +39,18 @@ class PlanActionAlertMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.plan_action.alert',
-            with: [
-                'plan_action'   => $this->planAction,
-                'username'  => $this->username,
-            ],
+            view: 'mails.notifications.alerte_seuil_kri_mail',
+             with :[
+                'indicateur'=>$this->kri,
+                'username'=>$this->username,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \\Illuminate\\Mail\\Mailables\\Attachment>
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

@@ -112,14 +112,14 @@
         <div class="content">
             <p>Bonjour {{ $username }}, </p>
             
-            <p>Nous vous informons qu’un nouveau plan d'action a été ajouté dans l’application de gestion des risques le {{ $plan_action->created_at->format('d/m/Y') }}.</p>
+            <p>Nous vous informons qu’un nouveau indicateur risque a été ajouté dans l’application de gestion des risques le {{ $indicateur->created_at->format('d/m/Y') }}.</p>
             
-            <h3>Détails du plan action : </h3>
-            <p>Index : {{ $plan_action->index ?? 'Aucun risque associé' }}</p>
-            <p>Service : {{ $plan_action->service->name }}</p>
-            <p>Type: {{ $plan_action->type }}</p>
-            <p>Priorité: {{ $plan_action->priorite }}</p>
-            <p>Ce plan d'action a été enregistré par {{ $plan_action->creator->username }}.</p>
+            <h3>Détails du risque : </h3>
+            <p>Libellé : {{ $indicateur->libelle }}</p>
+            <p>Service : {{ $indicateur->service->name }}</p>
+            <p>Seuil d'alerte : {{ $indicateur->seuil_alerte }}</p>
+            <p>Valeur actuelle: {{ $indicateur->valeur_actuelle }}</p>
+            <p>Cet indicateur a été enregistré par {{ $indicateur->creator->username }}.</p>
             
             
             <p>Vous pouvez consulter les détails et suivre les actions associées directement via l'espace de gestion</p>

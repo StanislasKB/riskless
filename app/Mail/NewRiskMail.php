@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\PlanAction;
+use App\Models\FicheRisque;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -10,26 +10,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PlanActionAlertMail extends Mailable implements ShouldQueue
+class NewRiskMail extends Mailable
 {
     use Queueable, SerializesModels;
+    protected $risque;
+    protected $username;
 
-    public $planAction;
-    public $username;
-   
     /**
      * Create a new message instance.
-     *
-     * @param  \\App\\Models\\PlanAction  $planAction
-     * @param  string  $serviceName
-     * @param  string  $recipientName
-     * @param  string  $actionUrl
      */
-    public function __construct(PlanAction $planAction, $username)
+    public function __construct(FicheRisque $risque,$username)
     {
-        $this->planAction   = $planAction;
-        $this->username  = $username;
-        
+        $this->risque =$risque;
+        $this->username =$username;
     }
 
     /**
@@ -38,7 +31,7 @@ class PlanActionAlertMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Un nouveau plan d\'action a été ajouté ' ,
+            subject: 'Un nouveau risque a été ajouté',
         );
     }
 
@@ -48,18 +41,18 @@ class PlanActionAlertMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mails.plan_action.alert',
-            with: [
-                'plan_action'   => $this->planAction,
-                'username'  => $this->username,
-            ],
+            view: 'mails.notifications.new_risk_mail',
+            with :[
+                'fiche_risque'=>$this->risque,
+                'username'=>$this->username,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \\Illuminate\\Mail\\Mailables\\Attachment>
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

@@ -18,8 +18,8 @@ class NotificationTypeSeeder extends Seeder
             ['code' => 'new_incident', 'label' => 'Nouvel incident ajouté'],
             ['code' => 'new_indicateur', 'label' => 'Nouveau indicateur ajouté'],
             ['code' => 'new_plan_action', 'label' => 'Nouveau plan d\'action ajouté'],
-            ['code' => 'retard_plan_action', 'label' => 'Retard de démarrage d\'un plan d\'action'],
-            ['code' => 'expired_date_plan_action', 'label' => 'Fin prévue dépassée pour un plan d\'action'],
+            ['code' => 'retard_plan_action', 'label' => 'Retard dans la mise en oeuvre d\'un plan d\'action'],
+            ['code' => 'kri_seuil_alerte', 'label' => 'Seuil d\'alerte de tolérance pour KRI'],
         ];
 
         foreach ($types as $type) {

@@ -112,16 +112,34 @@
         <div class="content">
             <p>Bonjour {{ $username }}, </p>
             
-            <p>Nous vous informons qu’un nouveau plan d'action a été ajouté dans l’application de gestion des risques le {{ $plan_action->created_at->format('d/m/Y') }}.</p>
+            <p>Nous vous informons qu’un plan d’action enregistré dans le système de gestion des risques est actuellement en retard par rapport à sa date d’échéance.</p>
             
-            <h3>Détails du plan action : </h3>
-            <p>Index : {{ $plan_action->index ?? 'Aucun risque associé' }}</p>
-            <p>Service : {{ $plan_action->service->name }}</p>
-            <p>Type: {{ $plan_action->type }}</p>
-            <p>Priorité: {{ $plan_action->priorite }}</p>
-            <p>Ce plan d'action a été enregistré par {{ $plan_action->creator->username }}.</p>
-            
-            
+            <h3>Détails du plan d'action : </h3>
+            <p>Index : {{ $plan_action->index }}</p>
+            <p>Progression : {{ $plan_action->progression }}%</p>
+            <p>Statut actuel : 
+                @switch($plan_action->statut)
+                    @case('A_LANCER')
+                        A lancer
+                        @break
+                    @case('PLANIFIER')
+                        Planifié
+                        @break
+                    @case('EN_COURS')
+                        En cours
+                        @break
+                    @case('TERMINER')
+                        Terminé
+                        @break
+                    @case('PAUSE')
+                       En pause
+                        @break
+                    @default
+                @endswitch
+            </p>
+            <p>Date d’échéance prévue : {{ Carbon\Carbon::parse($plan_action->date_fin_prevue)->format('d/m/Y') }}</p>
+            <p>Responsable : {{ $plan_action->responsable }}</p>
+            <p>Nous vous invitons à prendre connaissance de cette situation et à mettre à jour les informations ou réagir en conséquence dans les plus brefs délais.</p>
             <p>Vous pouvez consulter les détails et suivre les actions associées directement via l'espace de gestion</p>
            
             

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewKriMail;
+use App\Mail\NewRiskMail;
+use App\Mail\PlanActionAlertMail;
 use App\Models\AvancementPlanAction;
 use App\Models\EvolutionIndicateur;
 use App\Models\FicheRisque;
@@ -15,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class FicheRisqueController extends Controller
 {
@@ -290,6 +294,14 @@ class FicheRisqueController extends Controller
             'action_maitrise_risque' => $request->boolean('action_maitrise_risque'),
             'other_informations' => $request->other_informations ?? null,
         ]);
+        $users = $fiche->creator->account->users()->get();
+        foreach ($users as $user) {
+            if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($fiche->service_id, $user->services()->pluck('services.id')->toArray())) {
+                if ($user->isNotificationEnabled('new_risk')) {
+                    Mail::to($user->email)->send(new NewRiskMail($fiche, $user->username));
+                }
+            }
+        }
         if ($request->boolean('risque_a_piloter')) {
             if ($request->kri_choice == 'create') {
                 $indicateur = Indicateur::create([
@@ -322,6 +334,14 @@ class FicheRisqueController extends Controller
                     'mois' => Carbon::now()->month,
 
                 ]);
+                $users = $indicateur->creator->account->users()->get();
+                foreach ($users as $user) {
+                    if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($indicateur->service_id, $user->services()->pluck('services.id')->toArray())) {
+                        if ($user->isNotificationEnabled('new_indicateur')) {
+                            Mail::to($user->email)->send(new NewKriMail($indicateur, $user->username));
+                        }
+                    }
+                }
             } elseif ($request->kri_choice == 'select') {
                 $indicateur = Indicateur::findOrFail($request->kri_existing);
                 $risk_indicateur = FicheRisqueIndicateur::create([
@@ -352,7 +372,7 @@ class FicheRisqueController extends Controller
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
                     'plan_action_id' => $plan_action->id,
-                    
+
                 ]);
                 $avancement = AvancementPlanAction::create([
                     'created_by' => Auth::id(),
@@ -361,12 +381,20 @@ class FicheRisqueController extends Controller
                     'mois' => Carbon::now()->month,
                     'reste_a_faire' => 100,
                 ]);
+                 $users = $plan_action->creator->account->users()->get();
+                foreach ($users as $user) {
+                    if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($plan_action->service_id, $user->services()->pluck('services.id')->toArray())) {
+                        if ($user->isNotificationEnabled('new_plan_action')) {
+                            Mail::to($user->email)->send(new PlanActionAlertMail($plan_action, $user->username));
+                        }
+                    }
+                }
             } elseif ($request->pa_choice == 'select_pa') {
                 $plan_action = PlanAction::findOrFail($request->pa_existing);
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
                     'plan_action_id' => $plan_action->id,
-                    
+
                 ]);
                 $plan_action->index = $this->getNextPaIndex($fiche->index);
                 $plan_action->save();

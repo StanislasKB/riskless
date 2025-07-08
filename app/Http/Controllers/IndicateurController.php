@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AlerteSeuilKriMail;
+use App\Mail\NewKriMail;
 use App\Models\EvolutionIndicateur;
 use App\Models\FicheRisque;
 use App\Models\FicheRisqueIndicateur;
@@ -11,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class IndicateurController extends Controller
 {
@@ -124,6 +127,14 @@ class IndicateurController extends Controller
 
         ]);
 
+        $users = $indicateur->creator->account->users()->get();
+        foreach ($users as $user) {
+            if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($indicateur->service_id, $user->services()->pluck('services.id')->toArray())) {
+                if ($user->isNotificationEnabled('new_indicateur')) {
+                    Mail::to($user->email)->send(new NewKriMail($indicateur, $user->username));
+                }
+            }
+        }
 
 
         return redirect()->back()->with('success', 'Indicateur enregistré avec succès.');
@@ -180,6 +191,16 @@ class IndicateurController extends Controller
             $evolution = $indicateur->evolutions()->latest()->first();
             $evolution->valeur = $request->kri_valeur_actuelle;
             $evolution->save();
+            if ($indicateur->valeur_actuelle > $indicateur->seuil_alerte) {
+                $users = $indicateur->creator->account->users()->get();
+                foreach ($users as $user) {
+                    if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($indicateur->service_id, $user->services()->pluck('services.id')->toArray())) {
+                        if ($user->isNotificationEnabled('kri_seuil_alerte')) {
+                            Mail::to($user->email)->send(new AlerteSeuilKriMail($indicateur, $user->username));
+                        }
+                    }
+                }
+            }
         }
 
         return redirect()->back()->with('success', 'Indicateur modifié avec succès.');
@@ -222,6 +243,16 @@ class IndicateurController extends Controller
             'annee' => Carbon::now()->year,
             'mois' => Carbon::now()->month,
         ]);
+        if ($indicateur->valeur_actuelle > $indicateur->seuil_alerte) {
+            $users = $indicateur->creator->account->users()->get();
+            foreach ($users as $user) {
+                if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($indicateur->service_id, $user->services()->pluck('services.id')->toArray())) {
+                    if ($user->isNotificationEnabled('kri_seuil_alerte')) {
+                        Mail::to($user->email)->send(new AlerteSeuilKriMail($indicateur, $user->username));
+                    }
+                }
+            }
+        }
 
         return redirect()->back()->with('success', 'Nouvelle valeur ajoutée pour un indicateur.');
     }

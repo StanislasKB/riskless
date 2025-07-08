@@ -92,12 +92,12 @@
                                     </div>
                                 @endforeach
 
-
+                                <div class="div">
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                </div>
                             </form>
 
-                            <div class="div">
-                                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -225,7 +225,8 @@
 
                                         </form>
                                         <div class="mt-5">
-                                            <a href="{{ route('global.email_request.view') }}" class="btn btn-primary">Change l'adresse email</a>
+                                            <a href="{{ route('global.email_request.view') }}"
+                                                class="btn btn-primary">Change l'adresse email</a>
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-7">
