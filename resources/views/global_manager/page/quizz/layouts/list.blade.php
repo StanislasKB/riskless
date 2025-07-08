@@ -1,3 +1,9 @@
+<div class="d-flex justify-content-between">
+  <a href="{{ route('global.quizz.add.view') }}" class="btn btn-primary">Ajouter un quizz</a>
+  <a href="" class="btn btn-primary">Liste soumissions</a>
+					
+</div>
+<hr>
 <div class="row">
      @if (session('success'))
                 <div class="alert alert-success" role="alert">
@@ -66,13 +72,23 @@
                 </li>
                 
             </ul>
-            <div class="card-body">
+            <div class="card-body d-flex justify-content-between">
               <a href="{{ Storage::url($quizz->document_url) }}" class="btn btn-primary">Télécharger</a>
+              @if (!Auth::user()->quizzResponses()->exists())
+              <a href="#"  data-bs-toggle="modal" data-bs-target="#submitResponse-{{ $quizz->id }}" class="btn btn-primary">Soumettre une réponse</a>
+              @endif
             </div>
+            @include('global_manager.page.quizz.layouts.response.modal')
         </div>
     </div>
      @empty
          <h5>Aucun quizz disponible</h5>
      @endforelse
     
+</div>
+@php
+    $pagination_list=$quizzs;
+@endphp
+<div class="d-flex align-items-center justify-content-center">
+    @include('global_manager.components.layouts.pagination')
 </div>

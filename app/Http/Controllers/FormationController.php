@@ -10,7 +10,7 @@ class FormationController extends Controller
 {
     public function index()
     {
-        $formations = Formation::all();
+        $formations = Formation::paginate(9);
         return view('global_manager.page.formation.index', compact('formations'));
     }
     public function add_view()

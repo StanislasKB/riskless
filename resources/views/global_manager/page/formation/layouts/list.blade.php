@@ -76,3 +76,9 @@
      @endforelse
     
 </div>
+@php
+    $pagination_list=$formations;
+@endphp
+<div class="d-flex align-items-center justify-content-center">
+    @include('global_manager.components.layouts.pagination')
+</div>

@@ -11,7 +11,7 @@ class QuizzController extends Controller
 {
     public function index()
     {
-        $quizzs = Quizz::all();
+        $quizzs = Quizz::paginate(9);
         return view('global_manager.page.quizz.index', compact('quizzs'));
     }
     public function add_view()

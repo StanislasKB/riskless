@@ -103,7 +103,7 @@ class User extends Authenticatable
         return $this->hasManyThrough(
             QuizzResponse::class, // Modèle final
             Quizz::class,         // Modèle intermédiaire
-            'user_id',            // Clé étrangère dans la table quizz (indiquant le créateur)
+            'created_by',            // Clé étrangère dans la table quizz (indiquant le créateur)
             'quizz_id'            // Clé étrangère dans la table quizzresponse
         );
     }

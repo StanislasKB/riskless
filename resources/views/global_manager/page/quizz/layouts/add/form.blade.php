@@ -53,7 +53,7 @@
                         <div class="col-md-6">
                             <label for="formFile" class="form-label">Choisir l'image de couverture</label>
                             <input class="form-control" type="file" id="formFile" accept="image/*"
-                                name="formation_img">
+                                name="quizz_img">
                         </div>
                         <div class="col-md-6">
                             <label for="formationFile" class="form-label">Choisir le fichier (pdf)</label>

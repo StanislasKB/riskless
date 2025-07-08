@@ -13,8 +13,8 @@ class QuizzResponseController extends Controller
    public function index(Request $request)
     {
 
-        $results = Auth::user()->quizzResponses()->get();
-        return view('dashboard.pages.responses.index', compact('results'));
+        $responses = Auth::user()->quizzResponses()->get();
+        return view('global_manager.page.response.index', compact('responses'));
     }
 
 

@@ -112,12 +112,8 @@ Route::prefix('/global')->name('global.')->group(function () {
         });
     Route::prefix('/quizz-responses')->name('responses.')->group( function () {
         Route::get('/list', [QuizzResponseController::class,'index'])->name('list.view');
-        // Route::get('/add', [QuizzController::class,'add_view'])->name('add.view')->middleware('auth');
-        // Route::get('/update/{id}', [QuizzController::class,'update_view'])->name('update.view')->middleware('auth');
-        // Route::post('/update/{id}', [QuizzController::class,'update'])->name('update.post')->middleware('auth');
         Route::post('/add/{id}', [QuizzResponseController::class,'submit_response'])->name('add.post');
         Route::post('/score/{id}', [QuizzResponseController::class,'submit_score'])->name('score.post');
-        // Route::get('/delete/{id}', [QuizzController::class,'delete'])->name('delete')->middleware('auth');
 
         });
 });
