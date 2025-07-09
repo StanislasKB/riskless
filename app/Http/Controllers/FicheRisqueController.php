@@ -294,6 +294,11 @@ class FicheRisqueController extends Controller
             'action_maitrise_risque' => $request->boolean('action_maitrise_risque'),
             'other_informations' => $request->other_informations ?? null,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($fiche)
+            ->action('create')
+            ->log("Création d'un risque");
         $users = $fiche->creator->account->users()->get();
         foreach ($users as $user) {
             if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($fiche->service_id, $user->services()->pluck('services.id')->toArray())) {
@@ -322,6 +327,11 @@ class FicheRisqueController extends Controller
                     'commentaire' => $request->kri_commentaire,
                     'date_maj_valeur' => now()->toDateString(),
                 ]);
+                activity()
+                    ->causedBy(Auth::user())
+                    ->performedOn($indicateur)
+                    ->action('create')
+                    ->log("Création d'un indicateur de risque");
                 $risk_indicateur = FicheRisqueIndicateur::create([
                     'fiche_risque_id' => $fiche->id,
                     'indicateur_id' => $indicateur->id
@@ -369,6 +379,12 @@ class FicheRisqueController extends Controller
                     'statut' => $request->pa_statut,
                     'progression' => 0,
                 ]);
+
+                activity()
+                    ->causedBy(Auth::user())
+                    ->performedOn($plan_action)
+                    ->action('create')
+                    ->log("Création d'un plan d'action");
                 $risk_plan_action = FicheRisquePlanAction::create([
                     'fiche_risque_id' => $fiche->id,
                     'plan_action_id' => $plan_action->id,
@@ -381,7 +397,7 @@ class FicheRisqueController extends Controller
                     'mois' => Carbon::now()->month,
                     'reste_a_faire' => 100,
                 ]);
-                 $users = $plan_action->creator->account->users()->get();
+                $users = $plan_action->creator->account->users()->get();
                 foreach ($users as $user) {
                     if ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('viewer') || in_array($plan_action->service_id, $user->services()->pluck('services.id')->toArray())) {
                         if ($user->isNotificationEnabled('new_plan_action')) {
@@ -555,6 +571,11 @@ class FicheRisqueController extends Controller
             'action_maitrise_risque' => $request->boolean('action_maitrise_risque'),
             'other_informations' => $request->other_informations ?? null,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($fiche_risque)
+            ->action('update')
+            ->log("Modification d'un risque");
         if ($request->boolean('risque_a_piloter')) {
 
             if ($request->indicateur) {
@@ -624,6 +645,11 @@ class FicheRisqueController extends Controller
         }
         $fiche_risque->is_validated = true;
         $fiche_risque->validated_by = Auth::id();
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($fiche_risque)
+            ->action('update')
+            ->log("Validation d'un risque");
         $fiche_risque->save();
         return redirect()->back()->with('success', 'Risque validé avec succès.');
     }
@@ -647,6 +673,13 @@ class FicheRisqueController extends Controller
             $plan->save();
         }
         $fiche_risque->plan_actions()->detach();
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $fiche_risque->toArray(),
+            ])
+            ->log("Suppression d'un risque");
         $fiche_risque->delete();
         return redirect()->back()->with('success', 'Risque supprimé avec succès.');
     }

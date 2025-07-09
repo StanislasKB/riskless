@@ -44,6 +44,12 @@ class FormationController extends Controller
             'img_url' => $request->hasFile('formation_img') ? $request->file('formation_img')->store('formation_imgs', 'public') : null,
             'document_url' => $request->file('document')->store('formations', 'public')
         ]);
+
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($formation)
+            ->action('create')
+            ->log("Création d'une formation");
         return back()->with('success', 'Formation ajoutée avec success');
     }
 
@@ -92,6 +98,11 @@ class FormationController extends Controller
                 $updateData['document_url'] = $request->file('document')->store('formations', 'public');
             }
             $formation->update($updateData);
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($formation)
+                ->action('update')
+                ->log("Modification d'une formation");
             return back()->with('success', 'Formation mise à jour avec succès');
         } else {
             abort(403);
@@ -102,6 +113,13 @@ class FormationController extends Controller
     {
         $formation = Formation::findOrFail($id);
         if (Auth::user()->id == $formation->creator->id) {
+            activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+             ->withProperties([
+                'snapshot' => $formation->toArray(),
+            ])
+            ->log("Suppression d'une formation");
             $formation->delete();
             return back()->with('success', 'Formation supprimée avec succès');
         } else {
