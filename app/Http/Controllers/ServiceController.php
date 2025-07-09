@@ -42,6 +42,11 @@ class ServiceController extends Controller
             'account_id' => $account->id,
             'name'       => $validated['name'],
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($service)
+            ->action('create')
+            ->log("Création d'un service");
 
         return back()->with([
             'success' => 'Le service a bien été créé au sein du compte.',
@@ -82,6 +87,11 @@ class ServiceController extends Controller
                 'service_id' => (int) $service,
             ]);
         }
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($user)
+            ->action('create')
+            ->log("Création et ajout d'un utilisateur à un service");
         Mail::to($user->email)->send(new UserMail($user, $password, Auth::user()->username));
         return back()->with([
             'success' => 'L\'utilisateur a été ajouté. Il recevra un mail avec ses identifiants de connexion.',
@@ -98,13 +108,18 @@ class ServiceController extends Controller
         $permissions = $validated['permission'];
 
         $user->syncPermissions($permissions);
+         activity()
+                ->causedBy(Auth::user())
+                ->performedOn(user)
+                ->action('update')
+                ->log("Modification des permissions d'un utilisateur");
 
         return back()->with([
             'success' => 'Permissions mises à jour avec succès.',
         ]);
     }
 
-    
+
 
     public static function genererMotDePasseFort($longueur = 8)
     {

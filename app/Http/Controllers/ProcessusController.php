@@ -51,7 +51,7 @@ class ProcessusController extends Controller
             'commentaire' => 'nullable|string',
         ]);
 
-        Processus::create([
+        $processus = Processus::create([
             'macroprocessus_id' => (int) $request->macroprocessus,
             'created_by' => Auth::id(),
             'name' => $request->name,
@@ -67,6 +67,12 @@ class ProcessusController extends Controller
             'actif' => $request->actif,
             'commentaire' => $request->commentaire,
         ]);
+
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($processus)
+            ->action('create')
+            ->log("Création d'un processus");
 
         return redirect()->back()->with('success', 'Processus créé avec succès.');
     }
@@ -114,6 +120,11 @@ class ProcessusController extends Controller
             'actif' => $request->actif,
             'commentaire' => $request->commentaire,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($processus)
+            ->action('update')
+            ->log("Modification d'un processus");
 
         return redirect()->back()->with('success', 'Processus mis à jour avec succès.');
     }
@@ -131,7 +142,13 @@ class ProcessusController extends Controller
         if ($utilise) {
             return redirect()->back()->with(['error' => 'Impossible de supprimer : ce processus est lié à une ou plusieurs fiches de risque.']);
         }
-
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $processus->toArray(),
+            ])
+            ->log("Suppression d'un processus");
         $processus->delete();
 
         return redirect()->back()->with('success', 'Processus supprimé avec succès.');

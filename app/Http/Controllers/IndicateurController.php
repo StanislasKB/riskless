@@ -126,6 +126,11 @@ class IndicateurController extends Controller
             'mois' => Carbon::now()->month,
 
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($indicateur)
+            ->action('create')
+            ->log("Création d'un indicateur de risque");
 
         $users = $indicateur->creator->account->users()->get();
         foreach ($users as $user) {
@@ -183,6 +188,11 @@ class IndicateurController extends Controller
             'seuil_alerte' => (float) $request->kri_seuil_alerte,
             'commentaire' => $request->kri_commentaire,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($indicateur)
+            ->action('update')
+            ->log("Modification d'un indicateur de risque");
         if ($indicateur->valeur_actuelle != $request->kri_valeur_actuelle) {
             $indicateur->update([
                 'valeur_actuelle' => (float)  $request->kri_valeur_actuelle,
@@ -203,6 +213,7 @@ class IndicateurController extends Controller
             }
         }
 
+
         return redirect()->back()->with('success', 'Indicateur modifié avec succès.');
     }
 
@@ -218,6 +229,13 @@ class IndicateurController extends Controller
             return redirect()->back()->withErrors(['error'  => "Impossible de supprimer : cet indicateur risque est lié à un risque."]);
         }
         $indicateur->evolutions()->delete();
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $indicateur->toArray(),
+            ])
+            ->log("Suppression d'un indicateur de risque");
         $indicateur->delete();
         return redirect()->back()->with('success', 'Indicateur supprimé avec succès.');
     }

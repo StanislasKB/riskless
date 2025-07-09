@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanAction extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'account_id',
         'created_by',
         'service_id',
@@ -19,10 +19,10 @@ class PlanAction extends Model
         'date_fin_prevue',
         'statut',
         'progression',
-        
+
     ];
 
-     public function fiche_risques()
+    public function fiche_risques()
     {
         return $this->belongsToMany(FicheRisque::class, 'fiche_risque_plan_actions');
     }
@@ -30,8 +30,16 @@ class PlanAction extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-     public function service()
+    public function service()
     {
         return $this->belongsTo(Service::class);
     }
+    public function notification()
+    {
+        return $this->hasOne(PlanActionNotified::class);
+    }
+    public function isNotified(): bool
+{
+    return $this->notification?->is_notified ? true : false;
+}
 }
