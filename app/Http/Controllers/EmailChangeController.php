@@ -70,7 +70,11 @@ class EmailChangeController extends Controller
         $old_email=$user->email;
         $user->email = $emailChange->new_email;
         $user->save();
-        // Suppression de la demande
+         activity()
+            ->causedBy(Auth::user())
+            ->performedOn($user)
+            ->action('email_changed')
+            ->log("Changement d'adresse email");
         $emailChange->delete();
     
         // Envoie de la notification de sécurité à l’ancienne adresse

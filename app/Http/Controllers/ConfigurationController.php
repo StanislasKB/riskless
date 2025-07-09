@@ -8,6 +8,7 @@ use App\Models\Processus;
 use App\Models\RiskCategory;
 use App\Models\RiskCause;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -39,12 +40,17 @@ class ConfigurationController extends Controller
         foreach ($causes as $index => $libelle) {
             $niveau = $niveaux[$index];
 
-            RiskCause::create([
+            $risque_cause = RiskCause::create([
                 'libelle' => $libelle,
                 'level' => (int) $niveau,
                 'account_id' => Auth::user()->account->id,
                 'created_by' => Auth::id(),
             ]);
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($risque_cause)
+                ->action('create')
+                ->log("Création d'une cause de risque");
         }
 
         return redirect()->back()->with('success', 'Causes de risque enregistrées.');
@@ -56,11 +62,16 @@ class ConfigurationController extends Controller
         $todos = $request->input('categories');
 
         foreach ($todos as $todoText) {
-            RiskCategory::create([
+            $risque_category = RiskCategory::create([
                 'libelle' => $todoText,
                 'account_id' => Auth::user()->account->id,
                 'created_by' => Auth::id(),
             ]);
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($risque_category)
+                ->action('create')
+                ->log("Création d'une catégorie de risque");
         }
 
         return redirect()->back()->with('success', 'Categories de risque enregistrées.');
@@ -72,16 +83,21 @@ class ConfigurationController extends Controller
         $entites = $request->input('entites');
 
         if (!$names || !$entites || count($names) !== count($entites)) {
-            return redirect()->back()->withErrors(['error'  =>'Veuillez remplir tous les champs.']);
+            return redirect()->back()->withErrors(['error'  => 'Veuillez remplir tous les champs.']);
         }
 
         foreach ($names as $index => $name) {
-            Macroprocessus::create([
+            $macro = Macroprocessus::create([
                 'name' => $name,
                 'entite' => $entites[$index],
                 'account_id' => Auth::user()->account->id,
                 'created_by' => Auth::id(),
             ]);
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($macro)
+                ->action('create')
+                ->log("Création d'un macroprocessus");
         }
 
         return redirect()->back()->with('success', 'Macroprocessus enregistrés avec succès.');
@@ -97,11 +113,16 @@ class ConfigurationController extends Controller
         if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $cause->created_by) {
             abort(403);
         }
-
-        $cause->update([
+        $old = $cause;
+        $new =  $cause->update([
             'libelle' => $request->libelle,
             'level' => (int) $request->niveau,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($cause)
+            ->action('update')
+            ->log("Modification d'une cause de risque");
         return redirect()->back()->with('success', 'Cause de risque mis à jour avec succès.');
     }
 
@@ -118,7 +139,13 @@ class ConfigurationController extends Controller
         if ($utilisee) {
             return redirect()->back()->withErrors(['error'  => "Impossible de supprimer : cette cause de risque est utilisée dans au moins une fiche."]);
         }
-
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $cause->toArray(),
+            ])
+            ->log("Suppression d'une cause de risque");
         $cause->delete();
         return redirect()->back()->with('success', "Cause de risque supprimée avec succès.");
     }
@@ -136,7 +163,12 @@ class ConfigurationController extends Controller
         $category->update([
             'libelle' => $request->libelle,
         ]);
-        return redirect()->back()->with('success', 'Category de risque mis à jour avec succès.');
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($category)
+            ->action('update')
+            ->log("Modification d'une catégorie de risque");
+        return redirect()->back()->with('success', 'Catégorie de risque mis à jour avec succès.');
     }
 
     public function delete_risque_category($id)
@@ -148,10 +180,17 @@ class ConfigurationController extends Controller
         $utilisee = FicheRisque::where('category_id', $id)->exists();
 
         if ($utilisee) {
-            return redirect()->back()->withErrors(['error' =>'Impossible de supprimer : cette catégorie est liée à au moins une fiche de risque.']);
+            return redirect()->back()->withErrors(['error' => 'Impossible de supprimer : cette catégorie est liée à au moins une fiche de risque.']);
         }
 
-        // 3. Suppression
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $category->toArray(),
+                'ip' => request()->ip()
+            ])
+            ->log("Suppression d'une catégorie de risque");
         $category->delete();
 
         return redirect()->back()->with('success', "Categorie de risque supprimée avec succès.");
@@ -172,6 +211,11 @@ class ConfigurationController extends Controller
             'name' => $request->name,
             'entite' => $request->entite,
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($macro)
+            ->action('update')
+            ->log("Modification d'un macroprocessus");
         return redirect()->back()->with('success', 'Macroprocessus mis à jour avec succès.');
     }
 
@@ -181,21 +225,27 @@ class ConfigurationController extends Controller
         $macro = Macroprocessus::findOrFail($id);
 
         $utilise_dans_processus = Processus::where('macroprocessus_id', $id)->exists();
-         if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $macro->created_by) {
+        if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && Auth::id() != $macro->created_by) {
             abort(403);
         }
-        // dd($utilise_dans_processus);
+        
 
         if ($utilise_dans_processus) {
-            return redirect()->back()->withErrors(['error' =>'Impossible de supprimer : ce macroprocessus est utilisé dans au moins un processus.']);
+            return redirect()->back()->withErrors(['error' => 'Impossible de supprimer : ce macroprocessus est utilisé dans au moins un processus.']);
         }
 
         $utilise_dans_fiche = FicheRisque::where('macroprocessus_id', $id)->exists();
 
         if ($utilise_dans_fiche) {
-            return redirect()->back()->withErrors(['error'  =>'Impossible de supprimer : ce macroprocessus est utilisé dans au moins une fiche de risque.']);
+            return redirect()->back()->withErrors(['error'  => 'Impossible de supprimer : ce macroprocessus est utilisé dans au moins une fiche de risque.']);
         }
-
+        activity()
+            ->causedBy(Auth::user())
+            ->action('delete')
+            ->withProperties([
+                'snapshot' => $macro->toArray(), 
+            ])
+            ->log("Suppression d'un macroprocessus");
         $macro->delete();
         return redirect()->back()->with('success', 'Macroprocessus supprimé avec succès.');
     }

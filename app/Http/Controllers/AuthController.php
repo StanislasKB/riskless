@@ -127,7 +127,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-
+        activity()
+            ->causedBy(Auth::user())
+            ->action('logout')
+            ->log("Déconnexion");
         Auth::logout();
         return redirect(route('auth.login.view'));
     }
@@ -168,9 +171,16 @@ class AuthController extends Controller
         if (Auth::attempt(request()->only(['email', 'password']))) {
             $request->session()->regenerate();
             if (Auth::user()->email_verified_at && Auth::user()->status == 'ACTIVE') {
-
+                activity()
+                    ->causedBy(Auth::user())
+                    ->action('login')
+                    ->log("Connexion Réussie");
                 return redirect()->intended(route('global.dashboard.view'));
             } elseif (Auth::user()->status == 'INACTIVE') {
+                activity()
+                    ->causedBy(Auth::user())
+                    ->action('login_failed')
+                    ->log("Echec de connexion. Compte inactif");
                 return back()->withErrors([
                     'incorrect_information' => 'Mot de passe ou email incorrect.',
                 ]);
@@ -291,7 +301,8 @@ class AuthController extends Controller
                 'password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
                 'password2.required' => 'La confirmation du mot de passe est obligatoire.',
                 'password2.same' => 'Les mots de passe ne correspondent pas.',
-            ]);
+            ]
+        );
 
         $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
 
@@ -300,12 +311,16 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request->input('password'));
         $user->save();
+        activity()
+            ->causedBy($user)
+            ->action('password_reset')
+            ->log("Réinitialisation du mot de passe");
         DB::table('password_reset_tokens')->where('email', $user->email)->delete();
         return redirect(route('auth.login.view'))->with('success', 'Votre mot de passe a été réinitialiser avec succès.');
     }
     public function first_reset_password(Request $request)
     {
-       $credentials = $request->validate(
+        $credentials = $request->validate(
             [
                 'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
                 'password2' => ['required', 'same:password'],
@@ -320,7 +335,8 @@ class AuthController extends Controller
                 'password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
                 'password2.required' => 'La confirmation du mot de passe est obligatoire.',
                 'password2.same' => 'Les mots de passe ne correspondent pas.',
-            ]);
+            ]
+        );
         $user = User::findOrFail(Auth::id());
 
         $user->password = Hash::make($request->input('password'));
@@ -337,18 +353,18 @@ class AuthController extends Controller
             'old_password' => ['required'],
             'new_password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
             'new_password2' => ['required', 'same:new_password'],
-        ],[
-                'old_password.required' => 'Le mot de passe est obligatoire.',
-                'new_password.required' => 'Le mot de passe est obligatoire.',
-                'new_password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
-                'new_password.letters' => 'Le mot de passe doit contenir au moins une lettre.',
-                'new_password.mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
-                'new_password.numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
-                'new_password.symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
-                'new_password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
-                'new_password2.required' => 'La confirmation du mot de passe est obligatoire.',
-                'new_password2.same' => 'Les mots de passe ne correspondent pas.',
-            ]);
+        ], [
+            'old_password.required' => 'Le mot de passe est obligatoire.',
+            'new_password.required' => 'Le mot de passe est obligatoire.',
+            'new_password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'new_password.letters' => 'Le mot de passe doit contenir au moins une lettre.',
+            'new_password.mixed' => 'Le mot de passe doit contenir au moins une lettre majuscule et une lettre minuscule.',
+            'new_password.numbers' => 'Le mot de passe doit contenir au moins un chiffre.',
+            'new_password.symbols' => 'Le mot de passe doit contenir au moins un caractère spécial.',
+            'new_password.uncompromised' => 'Ce mot de passe a été trouvé dans une fuite de données, veuillez en choisir un autre.',
+            'new_password2.required' => 'La confirmation du mot de passe est obligatoire.',
+            'new_password2.same' => 'Les mots de passe ne correspondent pas.',
+        ]);
 
         $user = User::findOrFail(Auth::user()->id);
 
@@ -360,6 +376,10 @@ class AuthController extends Controller
 
         $user->password = Hash::make($request->new_password);
         $user->save();
+        activity()
+            ->causedBy($user)
+            ->action('password_changed')
+            ->log("Modification de mot de passe");
         return back()->with([
             'success' => 'Le mot de passe a été modifié avec succès.',
         ]);
@@ -381,10 +401,20 @@ class AuthController extends Controller
         if ($user->status == 'ACTIVE') {
             $user->status = 'INACTIVE';
             $user->save();
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($user)
+                ->action('account_blocked')
+                ->log("Blocage de compte");
             return back()->with('success', 'Utilisateur désactivé avec succès.');
         } elseif ($user->status == 'INACTIVE') {
             $user->status = 'ACTIVE';
             $user->save();
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($user)
+                ->action('accunt_unblocked')
+                ->log("Déblocage de compte");
             return back()->with('success', 'Utilisateur activé avec succès.');
         }
     }
@@ -393,6 +423,11 @@ class AuthController extends Controller
         $user = User::findOrFail($id);
         $user->status = 'DELETED';
         $user->save();
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($user)
+            ->action('account_deleted')
+            ->log("Suppression de compte");
         return back()->with('success', 'Utilisateur supprimé avec succès.');
     }
 
