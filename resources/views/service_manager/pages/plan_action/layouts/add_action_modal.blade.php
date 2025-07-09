@@ -65,6 +65,17 @@
                     @enderror
                 </div>
 
+                 <div class="mb-3">
+                    <label class="form-label">Statut</label>
+                    <select name="statut" id="" class="form-select mb-1 @error('statut') is-invalid @enderror">
+                        <option value="A_LANCER" {{ old('statut') == 'A_LANCER' ? 'selected' : '' }}>À lancer</option>
+                        <option value="A_PLANIFIER" {{ old('statut') == 'A_PLANIFIER' ? 'selected' : '' }}>À planifier</option>
+                    </select>
+                    @error('statut')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">Sélectionne le fiche de risque</label>
                     <select class="single-select form-select @error('fiche_risque_id') is-invalid @enderror"

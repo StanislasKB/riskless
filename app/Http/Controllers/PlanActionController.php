@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AvancementPlanAction;
 use App\Models\FicheRisquePlanAction;
 use App\Models\PlanAction;
 use App\Models\Service;
@@ -29,9 +30,6 @@ class PlanActionController extends Controller
     // Récupérer l'id du service depuis l'UUID (exemple)
     $service = Service::where('uuid', $uuid)->firstOrFail();
 
-
-
-
     // Fusionner les champs nécessaires AVANT validation
     $request->merge([
         'account_id' => $account_id,
@@ -41,7 +39,7 @@ class PlanActionController extends Controller
 
     // Validation
     $validated = $request->validate([
-        'index' => 'nullable|string|max:255',
+        // 'index' => 'nullable|string|max:255',
         'type' => 'nullable|string',
         'priorite' => 'nullable|string',
         'responsable' => 'nullable|string|max:255',
@@ -50,7 +48,7 @@ class PlanActionController extends Controller
         'date_debut_prevue' => 'nullable|date',
         'date_fin_prevue' => 'nullable|date|after_or_equal:date_debut_prevue',
         'statut' => 'nullable|string',
-        'progression' => 'nullable|integer|min:0|max:100',
+        // 'progression' => 'nullable|integer|min:0|max:100',
         'account_id' => 'required|exists:accounts,id',
         'service_id' => 'required|exists:services,id',
         'created_by' => 'required|exists:users,id',
@@ -58,6 +56,22 @@ class PlanActionController extends Controller
 
     // Création de plan_action avec les données validées
     $planAction = PlanAction::create($validated);
+
+    //creation de l'avancement du plan action
+    $planAction->progression = 0; // Initialisation de la progression à 0
+    $planAction->save();
+
+
+    //creation de l'avancement du plan action
+    $avancement=AvancementPlanAction::create([
+        'plan_action_id' => $planAction->id,
+        'created_by' => Auth::user()->id,
+        'mois' => now()->month,
+        'annee' => now()->year,
+        'statut' => $request->input('statut', 'A_LANCER'),
+        'reste_a_faire' => 100, // Initialisation à 100
+        'commentaire' => '', // Initialisation à une chaîne vide
+    ]);
 
 
     // Lier fiche risque si présent
