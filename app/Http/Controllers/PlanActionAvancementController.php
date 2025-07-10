@@ -39,19 +39,19 @@ class PlanActionAvancementController extends Controller
             'annee' => now()->year,
         ]);
 
-        dd($request->all());
 
         // Validation
         $validated = $request->validate([
             // 'index' => 'nullable|string|max:255',
-            'mois' => 'nullable|string',
-            'annee' => 'nullable|string',
-            'statut' => 'required|string',
+            'mois' => 'nullable',
+            'annee' => 'nullable',
+            'statut' => 'required',
             'reste_a_faire' => 'required|numeric|min:0|max:100',
             'commentaire' => 'nullable|string',
-            'plan_action_id' => 'required|exists:plan_actions,id',
+            'plan_action_id' => 'required',
             'created_by' => 'required|exists:users,id',
         ]);
+
 
         // Création de plan_action avec les données validées
         $avancementPlanAction = AvancementPlanAction::create($validated);
