@@ -19,7 +19,7 @@ class PlanAction extends Model
         'date_fin_prevue',
         'statut',
         'progression',
-        
+
     ];
 
      public function fiche_risques()
@@ -34,4 +34,13 @@ class PlanAction extends Model
     {
         return $this->belongsTo(Service::class);
     }
+        public function avancements()
+        {
+            return $this->hasMany(AvancementPlanAction::class, 'plan_action_id');
+        }
+
+        public function scopeFilterByService($query, $serviceId)
+        {
+            return $query->where('service_id', $serviceId);
+        }
 }

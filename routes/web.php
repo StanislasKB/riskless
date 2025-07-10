@@ -10,6 +10,7 @@ use App\Http\Controllers\GrapheController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IndicateurController;
 use App\Http\Controllers\MatriceController;
+use App\Http\Controllers\PlanActionAvancementController;
 use App\Http\Controllers\PlanActionController;
 use App\Http\Controllers\ProcessusController;
 use App\Http\Controllers\QuizzController;
@@ -116,7 +117,7 @@ Route::prefix('/global')->name('global.')->group(function () {
         Route::post('/score/{id}', [QuizzResponseController::class,'submit_score'])->name('score.post');
         });
 
-       // Referentiel 
+       // Referentiel
        Route::get('/referentiel', [GlobalDashboardController::class,'referentiel'])->name('referentiel.view');
        Route::get('/referentiel/{id}/risk', [GlobalDashboardController::class,'detail_view'])->name('detail.referentiel.view');
 });
@@ -128,6 +129,11 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::post('/plan-actions/create', [PlanActionController::class,'store'])->name('plan-actions.store');
     Route::put('/plan-actions/{planId}/update', [PlanActionController::class,'update'])->name('plan-actions.update');
     Route::delete('/plan-actions/{planId}/delete', [PlanActionController::class,'destroy'])->name('plan-actions.delete');
+    // avancements
+    Route::get('/plan-actions/{planId}/avancements', [PlanActionAvancementController::class,'index'])->name('plan-actions.avancements.view');
+    Route::post('/plan-actions/{planId}/avancements/create', [PlanActionAvancementController::class,'store'])->name('plan-actions.avancements.store');
+    Route::put('/plan-actions/{planId}/avancements/{avancementId}/update', [PlanActionAvancementController::class,'update'])->name('plan-actions.avancements.update');
+    Route::delete('/plan-actions/{planId}/avancements/{avancementId}/delete', [PlanActionAvancementController::class,'destroy'])->name('plan-actions.avancements.delete');
     // incidents
     Route::get('/incidents', [IncidentController::class,'index'])->name('incident.view');
     Route::post('/incidents/create', [IncidentController::class,'store'])->name('incident.store');
@@ -145,7 +151,7 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
 
     Route::get('/matrice', [MatriceController::class,'index'])->name('matrice.view');
 
-    //  indicateurs 
+    //  indicateurs
     Route::get('/indicateurs', [IndicateurController::class,'index'])->name('indicateurs.view');
     Route::get('/indicateurs/{id}/detail', [IndicateurController::class,'details_view'])->name('detail_indicateur.view');
     Route::get('/indicateurs/{id}/edit', [IndicateurController::class,'edit_view'])->name('edit_indicateur.view');

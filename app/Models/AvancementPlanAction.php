@@ -15,4 +15,9 @@ class AvancementPlanAction extends Model
         'reste_a_faire',
         'commentaire',
     ];
+
+    public function planAction()
+    {
+        return $this->belongsTo(PlanAction::class, 'plan_action_id');
+    }
 }

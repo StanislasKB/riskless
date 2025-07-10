@@ -69,7 +69,7 @@
                     <label class="form-label">Statut</label>
                     <select name="statut" id="" class="form-select mb-1 @error('statut') is-invalid @enderror">
                         <option value="A_LANCER" {{ old('statut') == 'A_LANCER' ? 'selected' : '' }}>À lancer</option>
-                        <option value="A_PLANIFIER" {{ old('statut') == 'A_PLANIFIER' ? 'selected' : '' }}>À planifier</option>
+                        <option value="PLANIFIER" {{ old('statut') == 'PLANIFIER' ? 'selected' : '' }}>Planifier</option>
                     </select>
                     @error('statut')
                         <div class="invalid-feedback">{{ $message }}</div>

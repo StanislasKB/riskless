@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="/admin/assets/css/app.css" />
     <link rel="stylesheet" href="/admin/assets/css/dark-sidebar.css" />
     <link rel="stylesheet" href="/admin/assets/css/dark-theme.css" />
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     @yield('page_css')
 </head>
 
@@ -134,6 +136,7 @@
         new PerfectScrollbar('.dashboard-social-list');
         new PerfectScrollbar('.dashboard-top-countries');
     </script>
+    @include('service_manager.components.layouts.toast-message')
     @yield('page_js')
 </body>
 
