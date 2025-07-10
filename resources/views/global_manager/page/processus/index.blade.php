@@ -37,7 +37,6 @@
             };
 
             $('#processus').DataTable({
-                scrollX : true,
                 language: dataTableLangFr
             });
         });

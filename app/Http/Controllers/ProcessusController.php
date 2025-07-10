@@ -153,4 +153,10 @@ class ProcessusController extends Controller
 
         return redirect()->back()->with('success', 'Processus supprimé avec succès.');
     }
+
+    public function details_view($id)
+    {
+        $processus=Processus::findOrFail($id);
+        return view('global_manager.page.processus.detail',compact('processus'));
+    }
 }

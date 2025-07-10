@@ -14,12 +14,14 @@
             <div class="card-body">
 
                 <!--end row-->
-                <div class="d-flex align-items-center">
-                    <div>
-                        <h5 class="mb-0">Causes de risque</h5>
-                    </div>
+                <div class="d-flex justify-content-between">
+
+                    <h5 class="mb-0">Causes de risque</h5>
+                    <a href="{{ route('global.add_configuration.view') }}" class="btn btn-primary">Ajouter une
+                        configuration</a>
+
                 </div>
-<hr>
+                <hr>
                 <div class="table-responsive">
                     <table id="risk_cause" class="table table-striped table-sm mb-0">
                         <thead>

@@ -40,11 +40,11 @@
     <div class="wrapper">
 
         <!--header-->
-        @include('global_manager.components.layouts.header')
+        @include('service_manager.components.layouts.header')
         <!--end header-->
 
         <!--navigation-->
-        @include('global_manager.components.layouts.navbar')
+        @include('service_manager.components.layouts.navbar')
         <!--end navigation-->
 
         <!--page-wrapper-->

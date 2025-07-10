@@ -87,6 +87,7 @@ Route::prefix('/global')->name('global.')->group(function () {
 
     Route::get('/processus', [ProcessusController::class,'index'])->name('processus.view');
     Route::get('/processus/add', [ProcessusController::class,'add'])->name('add_processus.view');
+    Route::get('/processus/{id}/detail', [ProcessusController::class,'details_view'])->name('detail_processus.view');
     Route::get('/processus/{id}/update', [ProcessusController::class,'update_view'])->name('update_processus.view');
     Route::post('/processus/{id}/update', [ProcessusController::class,'update'])->name('update_processus.post');
     Route::get('/processus/{id}/delete', [ProcessusController::class,'destroy'])->name('delete_processus.post');
