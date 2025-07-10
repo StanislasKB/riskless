@@ -49,6 +49,11 @@ class QuizzController extends Controller
             'img_url' => $request->hasFile('quizz_img') ? $request->file('quizz_img')->store('quizz_imgs', 'public') : null,
             'document_url' => $request->file('document')->store('quizzs', 'public')
         ]);
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($quizz)
+            ->action('create')
+            ->log("Création d'un quizz");
         return back()->with('success', 'Quizz ajouté avec succès');
     }
 
@@ -100,6 +105,11 @@ class QuizzController extends Controller
                 $updateData['document_url'] = $request->file('document')->store('quizzs', 'public');
             }
             $quizz->update($updateData);
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($quizz)
+                ->action('update')
+                ->log("Modification d'un quizz");
             return back()->with('success', 'Quizz mis à jour avec succès');
         } else {
             abort(403);
@@ -110,7 +120,15 @@ class QuizzController extends Controller
     {
         $quizz = Quizz::findOrFail($id);
         if ($quizz->user_id == Auth::user()->id) {
+            activity()
+                ->causedBy(Auth::user())
+                ->action('delete')
+                ->withProperties([
+                    'snapshot' => $quizz->toArray(),
+                ])
+                ->log("Suppression d'un quizz");
             $quizz->delete();
+
             return back()->with('success', 'Quizz supprimée avec succès');
         } else {
             abort(403);
