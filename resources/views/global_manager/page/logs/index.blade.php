@@ -1,15 +1,13 @@
 @extends('global_manager.components.app')
 @section('title')
-    Processus
-@endsection
-@section('page_css')
+    
 @endsection
 @section('main_content')
-    @include('global_manager.page.processus.layouts.page_header')
-    @include('global_manager.page.processus.layouts.list_processus')
+    @include('global_manager.page.logs.layouts.page_header')
+    @include('global_manager.page.logs.layouts.body')
 @endsection
 @section('page_js')
-    <script>
+ <script>
         $(document).ready(function() {
             const dataTableLangFr = {
                 "decimal": "",
@@ -35,10 +33,12 @@
                     "sortDescending": ": activer pour trier la colonne par ordre décroissant"
                 }
             };
-
-            $('#processus').DataTable({
-                language: dataTableLangFr
+           
+            $('#logs').DataTable({
+                language: dataTableLangFr,
+                
             });
+
         });
     </script>
 @endsection

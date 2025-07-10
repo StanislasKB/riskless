@@ -12,42 +12,44 @@
                 <div class="alert alert-danger" role="alert">{{ $error }}</div>
             @endforeach
             <div class="card-body">
-
+              
                 <!--end row-->
-                <div class="d-flex justify-content-between">
-
-                    <h5 class="mb-0">Causes de risque</h5>
-                    <a href="{{ route('global.add_configuration.view') }}" class="btn btn-primary">Ajouter une
-                        configuration</a>
-
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="mb-0">Journal des actions</h5>
+                    </div>
                 </div>
                 <hr>
                 <div class="table-responsive">
-                    <table id="risk_cause" class="table table-striped table-sm mb-0">
+                    <table id="logs" class="table table-striped table-sm mb-0">
                         <thead>
                             <tr>
-                                <th>Libellé
+                                <th>Date
                                 </th>
-                                <th>Niveau</th>
-                                <th>Ajouté par</th>
-                                <th></th>
+                                <th>Utilisateur</th>
+                                <th>Action</th>
+                                <th>Description</th>
+                                <th>IP</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($causes as $cause)
+                            @forelse ($logs as $log)
                                 <tr>
                                     <td>
-                                        <div class="font-weight-bold">{{ $cause->libelle }}
+                                        <div class="font-weight-bold">{{ $log->created_at->format('d/m/Y H:m') }}
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="font-weight-bold">{{ $cause->level }}</div>
+                                        <div class="font-weight-bold">{{ $log->causer->username }}</div>
                                     </td>
                                     <td>
-                                        {{ $cause->creator->username }}
+                                        {{ $log->action }}
                                     </td>
-
                                     <td>
+                                        {{ $log->description }}
+                                    </td>
+                                    <td>{{ $log->properties['ip'] }}</td>
+                                    {{-- <td>
                                         @if (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('owner') && $cause->creator->id != Auth::id)
                                             -
                                         @else
@@ -68,7 +70,7 @@
                                             @include('global_manager.page.configuration.layouts.modals.edit_cause_modal')
                                         @endif
 
-                                    </td>
+                                    </td> --}}
 
                                 </tr>
                             @empty

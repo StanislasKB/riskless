@@ -9,6 +9,7 @@ use App\Http\Controllers\GlobalDashboardController;
 use App\Http\Controllers\GrapheController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IndicateurController;
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\MatriceController;
 use App\Http\Controllers\PlanActionAvancementController;
 use App\Http\Controllers\PlanActionController;
@@ -86,6 +87,7 @@ Route::prefix('/global')->name('global.')->group(function () {
 
     Route::get('/processus', [ProcessusController::class,'index'])->name('processus.view');
     Route::get('/processus/add', [ProcessusController::class,'add'])->name('add_processus.view');
+    Route::get('/processus/{id}/detail', [ProcessusController::class,'details_view'])->name('detail_processus.view');
     Route::get('/processus/{id}/update', [ProcessusController::class,'update_view'])->name('update_processus.view');
     Route::post('/processus/{id}/update', [ProcessusController::class,'update'])->name('update_processus.post');
     Route::get('/processus/{id}/delete', [ProcessusController::class,'destroy'])->name('delete_processus.post');
@@ -120,6 +122,9 @@ Route::prefix('/global')->name('global.')->group(function () {
        // Referentiel
        Route::get('/referentiel', [GlobalDashboardController::class,'referentiel'])->name('referentiel.view');
        Route::get('/referentiel/{id}/risk', [GlobalDashboardController::class,'detail_view'])->name('detail.referentiel.view');
+
+       //Logs
+     Route::get('/logs', [LogsController::class,'index'])->name('logs.view');
 });
 
 Route::prefix('/service/{uuid}')->name('service.')->group(function () {
@@ -161,5 +166,7 @@ Route::prefix('/service/{uuid}')->name('service.')->group(function () {
     Route::get('/indicateurs/add', [IndicateurController::class,'add_view'])->name('add_indicateur.view');
     Route::post('/indicateurs/add', [IndicateurController::class,'store'])->name('add_indicateur.post');
     Route::get('/indicateurs/{id}/graphe', [GrapheController::class,'graphe_indicateur'])->name('graphe_indicateur.view');
+
+    
 
 });
