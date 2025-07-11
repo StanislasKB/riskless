@@ -122,6 +122,7 @@ Route::prefix('/global')->name('global.')->group(function () {
        // Referentiel
        Route::get('/referentiel', [GlobalDashboardController::class,'referentiel'])->name('referentiel.view');
        Route::get('/referentiel/{id}/risk', [GlobalDashboardController::class,'detail_view'])->name('detail.referentiel.view');
+       Route::get('/matrice', [MatriceController::class,'global'])->name('matrice.view');
 
        //Logs
      Route::get('/logs', [LogsController::class,'index'])->name('logs.view');

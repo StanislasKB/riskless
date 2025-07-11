@@ -40,9 +40,9 @@ return new class extends Migration
             $table->bigInteger('net_impact_value')->nullable();
             $table->enum('brut_impact', ['FAIBLE', 'MODERE', 'MOYEN','FORT','MAJEUR','CRITIQUE'])->nullable();
             $table->bigInteger('brut_impact_value')->nullable();
-            $table->enum('net_cotation', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','MAJEUR','CRITIQUE'])->nullable();
-            $table->enum('brut_cotation', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','MAJEUR','CRITIQUE'])->nullable();
-            $table->enum('echelle_risque', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','MAJEUR','CRITIQUE'])->nullable();
+            $table->enum('net_cotation', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','CRITIQUE'])->nullable();
+            $table->enum('brut_cotation', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','CRITIQUE'])->nullable();
+            $table->enum('echelle_risque', ['FAIBLE', 'INACCEPTABLE', 'MOYEN','FORT','CRITIQUE'])->nullable();
 
             // Booleans : impacts / conséquences
             $table->boolean('manque_a_gagner')->default(false);

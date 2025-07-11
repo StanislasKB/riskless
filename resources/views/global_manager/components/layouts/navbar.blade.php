@@ -41,7 +41,7 @@
                 <ul>
                     <li> <a href="{{ route('global.referentiel.view') }}"><i class="bx bx-right-arrow-alt"></i>Référentiel</a>
                     </li>
-                    <li> <a href=""><i class="bx bx-right-arrow-alt"></i>Matrice des risques</a>
+                    <li> <a href="{{ route('global.matrice.view') }}"><i class="bx bx-right-arrow-alt"></i>Matrice des risques</a>
                     </li>
                     
                 </ul>

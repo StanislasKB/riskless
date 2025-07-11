@@ -1,6 +1,6 @@
-@extends('service_manager.components.app')
+@extends('global_manager.components.app')
 @section('title')
-    Dashboard - {{ $service->name }}
+    Dashboard 
 @endsection
 @section('page_css')
     <style>
@@ -69,11 +69,11 @@
     </style>
 @endsection
 @section('main_content')
-    @include('service_manager.pages.matrice.layouts.page_header')
-    @include('service_manager.pages.matrice.layouts.body')
-    @include('service_manager.pages.matrice.layouts.echelles.recap')
-    @include('service_manager.pages.matrice.layouts.echelles.echelle')
-    @include('service_manager.pages.matrice.layouts.causes.level')
+    @include('global_manager.page.matrice.layouts.page_header')
+    @include('global_manager.page.matrice.layouts.body')
+    @include('global_manager.page.matrice.layouts.echelles.recap')
+    @include('global_manager.page.matrice.layouts.echelles.echelle')
+    @include('global_manager.page.matrice.layouts.causes.level')
 @endsection
 @section('page_js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -283,7 +283,8 @@
                                 text: 'Fréquence',
                                 font: {
                                     size: 16,
-                                    weight: 'bold'
+                                    weight: 'bold',
+                                    
                                 },
                                 padding: {
                                     top: 15
@@ -369,8 +370,7 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                        0
-                                    ];
+                                    0];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Impact: ${impactLabel}`,
@@ -530,8 +530,7 @@
                             const y = top + i * cellHeight;
 
                             ctx.fillStyle = matrixColorsBrut[5 - i][
-                                j
-                            ]; // Inversé pour correspondre à l'affichage
+                            j]; // Inversé pour correspondre à l'affichage
                             ctx.fillRect(x, y, cellWidth, cellHeight);
 
                             // Ajouter une bordure légère
@@ -705,8 +704,7 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                        0
-                                    ];
+                                    0];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Impact: ${impactLabel}`,
@@ -769,7 +767,7 @@
                 ['Fort', ''],
                 ['Critique', ''],
                 ['Inacceptable', ''],
-
+                
             ];
 
             // --- Couleurs (0 = Faible … 5 = Critique) ---
@@ -863,8 +861,7 @@
                             const y = top + i * cellHeight;
 
                             ctx.fillStyle = matrixColorsDmr[4 - i][
-                                j
-                            ]; // Inversé pour correspondre à l'affichage
+                            j]; // Inversé pour correspondre à l'affichage
                             ctx.fillRect(x, y, cellWidth, cellHeight);
 
                             // Ajouter une bordure légère
@@ -1038,8 +1035,7 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                        0
-                                    ];
+                                    0];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Appréciation: ${impactLabel}`,
