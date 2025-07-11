@@ -18,7 +18,7 @@ class PlanActionController extends Controller
         $plans = PlanAction::where('service_id', $service->id)->get();
 
 
-        return view('service_manager.pages.plan_action.index')->with([
+        return view('service_manager.pages.plan_action.graphe')->with([
             'service' => $service,
             'plans' => $plans,
         ]);
