@@ -14,6 +14,7 @@ class MatriceController extends Controller
         $fiche_risques = $service->fiche_risques()->get();
         $data_net = [];
         $data_brut = [];
+        $data_dmr = [];
 
         foreach ($fiche_risques as $fiche) {
             $data_net[$fiche->index] = [
@@ -38,6 +39,7 @@ class MatriceController extends Controller
         $causes_level_one = $this->regrouperCauses($fiche_risques, '1');
         $causes_level_two = $this->regrouperCauses($fiche_risques, '2');
         $causes_level_three = $this->regrouperCauses($fiche_risques, '3');
+        $repartition = $this->traiterRepartitionRisque($fiche_risques);
 
 
         return view('service_manager.pages.matrice.index', [
@@ -49,6 +51,7 @@ class MatriceController extends Controller
             'causes_level_one' => $causes_level_one,
             'causes_level_two' => $causes_level_two,
             'causes_level_three' => $causes_level_three,
+            'repartition' => $repartition,
 
         ]);
     }
@@ -57,6 +60,7 @@ class MatriceController extends Controller
         $fiche_risques = Auth::user()->account->fiche_risques()->get();
         $data_net = [];
         $data_brut = [];
+        $data_dmr = [];
 
         foreach ($fiche_risques as $fiche) {
             $data_net[$fiche->index] = [
@@ -73,6 +77,7 @@ class MatriceController extends Controller
             ];
         }
 
+
         $data_net = json_encode($data_net);
         $data_brut = json_encode($data_brut);
         $data_dmr = json_encode($data_dmr);
@@ -80,6 +85,8 @@ class MatriceController extends Controller
         $causes_level_one = $this->regrouperCauses($fiche_risques, '1');
         $causes_level_two = $this->regrouperCauses($fiche_risques, '2');
         $causes_level_three = $this->regrouperCauses($fiche_risques, '3');
+        $data_service = $this->compterRisquesParService(Auth::user()->account);
+        $repartition = $this->traiterRepartitionRisque($fiche_risques);
 
         return view('global_manager.page.matrice.index', [
             'data_brut' => $data_brut,
@@ -89,6 +96,9 @@ class MatriceController extends Controller
             'causes_level_one' => $causes_level_one,
             'causes_level_two' => $causes_level_two,
             'causes_level_three' => $causes_level_three,
+            'data_service' => $data_service,
+            'repartition' => $repartition,
+
 
         ]);
     }
@@ -336,5 +346,92 @@ class MatriceController extends Controller
         }
 
         return $resultat;
+    }
+
+    private function compterRisquesParService($account)
+    {
+        $resultats = [];
+        $total_general = [
+            'faible' => 0,
+            'moyen' => 0,
+            'fort' => 0,
+            'critique' => 0,
+            'inacceptable' => 0,
+            'total' => 0
+        ];
+
+        $services = $account->services()->get();
+
+        foreach ($services as $service) {
+            $compteur = [
+                'id' => $service->id,
+                'faible' => 0,
+                'moyen' => 0,
+                'fort' => 0,
+                'critique' => 0,
+                'inacceptable' => 0,
+                'total' => 0
+            ];
+
+            $fiches = $service->fiche_risques()->get();
+
+            foreach ($fiches as $fiche) {
+                $niveau = strtolower(trim($fiche->echelle_risque)); // ex: "FAIBLE" → "faible"
+
+                if (in_array($niveau, ['faible', 'moyen', 'fort', 'critique', 'inacceptable'])) {
+                    $compteur[$niveau]++;
+                    $compteur['total']++;
+
+                    $total_general[$niveau]++;
+                    $total_general['total']++;
+                }
+            }
+
+            $resultats[$service->name] = $compteur;
+        }
+
+        $resultats['total_general'] = $total_general;
+
+        return $resultats;
+    }
+
+    private function traiterRepartitionRisque($fiche_risques)
+    {
+        $result = [
+            'faible' => ['nb_moyen' => 0, 'pourcentage_moyen' => 0, 'nb_max' => 0, 'pourcentage_max' => 0],
+            'moyen' => ['nb_moyen' => 0, 'pourcentage_moyen' => 0, 'nb_max' => 0, 'pourcentage_max' => 0],
+            'fort' => ['nb_moyen' => 0, 'pourcentage_moyen' => 0, 'nb_max' => 0, 'pourcentage_max' => 0],
+            'critique' => ['nb_moyen' => 0, 'pourcentage_moyen' => 0, 'nb_max' => 0, 'pourcentage_max' => 0],
+            'inacceptable' => ['nb_moyen' => 0, 'pourcentage_moyen' => 0, 'nb_max' => 0, 'pourcentage_max' => 0],
+        ];
+
+        $total_moyen = 0;
+        $total_max = 0;
+
+        foreach ($fiche_risques as $fiche) {
+            // Traitement net_cotation (moyen)
+            $cotation_moyen = strtolower(trim($fiche->net_cotation));
+            if (isset($result[$cotation_moyen])) {
+                $result[$cotation_moyen]['nb_moyen'] += 1;
+                $total_moyen += 1;
+            }
+
+            // Traitement brut_cotation (max)
+            $cotation_max = strtolower(trim($fiche->brut_cotation));
+            if (isset($result[$cotation_max])) {
+                $result[$cotation_max]['nb_max'] += 1;
+                $total_max += 1;
+            }
+        }
+
+
+        foreach ($result as $key => &$data) {
+            $pourc_moyen = $total_moyen > 0 ? round(($data['nb_moyen'] / $total_moyen) * 100, 1) : 0;
+            $pourc_max = $total_max > 0 ? round(($data['nb_max'] / $total_max) * 100, 1) : 0;
+
+            $data['pourcentage_moyen'] = (fmod($pourc_moyen, 1) == 0) ? (int) $pourc_moyen : $pourc_moyen;
+            $data['pourcentage_max'] = (fmod($pourc_max, 1) == 0) ? (int) $pourc_max : $pourc_max;
+        }
+        return $result;
     }
 }

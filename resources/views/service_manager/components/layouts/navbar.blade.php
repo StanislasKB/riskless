@@ -85,14 +85,14 @@
                     </li>
                 </ul> --}}
             </li>
-            <li>
+            {{-- <li>
                 <a class="has-arrow" href="{{ route('global.processus.view') }}">
                     <div class="parent-icon icon-color-7"> <i class="bx bx-comment-edit"></i>
                     </div>
                     <div class="menu-title">Processus</div>
                 </a>
                 
-            </li>
+            </li> --}}
         </ul>
     </nav>
 </div>
