@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\FicheRisqueImport;
 use App\Mail\NewKriMail;
 use App\Mail\NewRiskMail;
 use App\Mail\PlanActionAlertMail;
@@ -15,10 +16,14 @@ use App\Models\Macroprocessus;
 use App\Models\PlanAction;
 use App\Models\Service;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class FicheRisqueController extends Controller
 {
@@ -810,4 +815,109 @@ class FicheRisqueController extends Controller
 
         return $prefix . '-PA-' . $nextNumber;
     }
+
+    public function importExcel(Request $request, $uuid)
+{
+    ini_set('memory_limit', '1G');
+     ini_set('max_execution_time', 300);
+    $service = Service::where('uuid', $uuid)->firstOrFail();
+
+    $validator = Validator::make($request->all(), [
+        'file' => 'required|mimes:xlsx,xls|max:10240'
+    ]);
+
+
+
+
+    if ($validator->fails()) {
+        dd($validator);
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+
+
+    try {
+        $file = $request->file('file');
+        $accountId = Auth::user()->account->id;
+        $serviceId = $service->id;
+        $createdBy = Auth::id();
+        $validatedBy = null; // optionnel
+
+
+        if (!$file) {
+            return redirect()->back()->withErrors([
+                'file' => 'Aucun fichier n\'a été uploadé.'
+            ]);
+        }
+
+        $tempPath = $file->store('temp');
+        $fullPath = storage_path('app/private/' . $tempPath);
+
+        // $sheetNames = $this->getSecSheetNames($fullPath);
+        // dd($sheetNames);
+
+        $import=new FicheRisqueImport($accountId, $createdBy, $validatedBy, $serviceId,$fullPath);
+
+        //   $import->onlySheets(...array_filter(
+        //     $import->sheets(),
+        //     fn($sheetName) => str_starts_with($sheetName, 'SEC')
+        // ));
+
+        Excel::import($import, $fullPath);
+
+
+        if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Import terminé avec succès.'
+        ]);
+
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        return redirect()->back()->withErrors([
+            'file' => 'Erreur de validation des données Excel.'
+        ]);
+
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors([
+            'file' => 'Erreur lors de l\'import : ' . $e->getMessage()
+        ]);
+    }
+}
+
+private function getSecSheetNames(string $filePath): array
+{
+    try {
+        // Créer le reader approprié
+        $reader = IOFactory::createReaderForFile($filePath);
+
+        // Optimiser les paramètres de lecture pour les métadonnées seulement
+        $reader->setReadDataOnly(true);
+        $reader->setReadEmptyCells(false);
+
+        // Lire seulement les noms des feuilles sans charger le contenu
+        $worksheetNames = $reader->listWorksheetNames($filePath);
+        $sheetNames = [];
+
+        // Filtrer les feuilles qui commencent par 'SEC'
+        foreach ($worksheetNames as $sheetName) {
+            if (str_starts_with($sheetName, 'SEC')) {
+                $sheetNames[] = $sheetName;
+            }
+        }
+
+        // Libérer la mémoire
+        unset($reader);
+
+        return $sheetNames;
+
+    } catch (Exception $e) {
+        // Gestion d'erreur
+        error_log("Erreur lors de la lecture du fichier Excel : " . $e->getMessage());
+        return [];
+    }
+}
+
 }

@@ -10,6 +10,7 @@
         </nav>
     </div>
     <div class="ms-auto">
+        @include('service_manager.pages.referentiel.layouts.import.import_modal')
         <div class="btn-group">
             <button type="button" class="btn btn-primary">Settings</button>
             <button type="button" class="btn btn-primary bg-split-primary dropdown-toggle dropdown-toggle-split"
