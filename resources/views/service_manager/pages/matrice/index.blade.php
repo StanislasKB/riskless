@@ -71,6 +71,7 @@
 @section('main_content')
     @include('service_manager.pages.matrice.layouts.page_header')
     @include('service_manager.pages.matrice.layouts.body')
+    @include('service_manager.pages.matrice.layouts.repartition.repartition')
     @include('service_manager.pages.matrice.layouts.echelles.recap')
     @include('service_manager.pages.matrice.layouts.echelles.echelle')
     @include('service_manager.pages.matrice.layouts.causes.level')

@@ -1,6 +1,6 @@
 @extends('global_manager.components.app')
 @section('title')
-    Dashboard 
+    Dashboard
 @endsection
 @section('page_css')
     <style>
@@ -71,6 +71,8 @@
 @section('main_content')
     @include('global_manager.page.matrice.layouts.page_header')
     @include('global_manager.page.matrice.layouts.body')
+     @include('global_manager.page.matrice.layouts.repartition.repartition')
+    @include('global_manager.page.matrice.layouts.service.service')
     @include('global_manager.page.matrice.layouts.echelles.recap')
     @include('global_manager.page.matrice.layouts.echelles.echelle')
     @include('global_manager.page.matrice.layouts.causes.level')
@@ -284,7 +286,7 @@
                                 font: {
                                     size: 16,
                                     weight: 'bold',
-                                    
+
                                 },
                                 padding: {
                                     top: 15
@@ -370,7 +372,8 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                    0];
+                                        0
+                                    ];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Impact: ${impactLabel}`,
@@ -530,7 +533,8 @@
                             const y = top + i * cellHeight;
 
                             ctx.fillStyle = matrixColorsBrut[5 - i][
-                            j]; // Inversé pour correspondre à l'affichage
+                                j
+                            ]; // Inversé pour correspondre à l'affichage
                             ctx.fillRect(x, y, cellWidth, cellHeight);
 
                             // Ajouter une bordure légère
@@ -704,7 +708,8 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                    0];
+                                        0
+                                    ];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Impact: ${impactLabel}`,
@@ -767,7 +772,7 @@
                 ['Fort', ''],
                 ['Critique', ''],
                 ['Inacceptable', ''],
-                
+
             ];
 
             // --- Couleurs (0 = Faible … 5 = Critique) ---
@@ -861,7 +866,8 @@
                             const y = top + i * cellHeight;
 
                             ctx.fillStyle = matrixColorsDmr[4 - i][
-                            j]; // Inversé pour correspondre à l'affichage
+                                j
+                            ]; // Inversé pour correspondre à l'affichage
                             ctx.fillRect(x, y, cellWidth, cellHeight);
 
                             // Ajouter une bordure légère
@@ -1035,7 +1041,8 @@
                                     const point = context.raw;
                                     const impactLabel = impactLabels[impactToIndex[point.impact]][0];
                                     const frequenceLabel = frequencyLabels[frequencyToIndex[point.frequence]][
-                                    0];
+                                        0
+                                    ];
                                     return [
                                         `Secteur: ${point.sec}`,
                                         `Appréciation: ${impactLabel}`,
@@ -1274,7 +1281,7 @@
             chart.render();
         });
     </script>
-    <script>
+   <script>
         document.getElementById('selectLevel').addEventListener('change', function() {
             const levelOne = document.getElementById('levelOne');
             const levelTwo = document.getElementById('levelTwo');
@@ -1295,6 +1302,128 @@
                 levelTwo.style.display = 'none';
             }
 
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartDivs = document.querySelectorAll('.service-chart');
+
+            chartDivs.forEach((div) => {
+                const rawData = div.getAttribute('data-service');
+                if (!rawData) return;
+
+                const data = JSON.parse(rawData);
+
+                const labels = ['Faible', 'Moyen', 'Fort', 'Critique', 'Inacceptable'];
+                const values = [
+                    data.faible || 0,
+                    data.moyen || 0,
+                    data.fort || 0,
+                    data.critique || 0,
+                    data.inacceptable || 0
+                ];
+
+                // Vérifie si toutes les valeurs sont à 0
+                const total = values.reduce((acc, val) => acc + val, 0);
+
+                let options;
+
+                if (total === 0) {
+                    // Cas où il n'y a aucune donnée
+                    options = {
+                        series: [1],
+                        chart: {
+                            type: 'pie',
+                            height: 300
+                        },
+                        labels: ['Aucune donnée'],
+                        colors: ['#cccccc'],
+                        legend: {
+                            position: 'bottom'
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: () => 'Aucune donnée'
+                        }
+                    };
+                } else {
+                    // Cas normal
+                    const colors = ["#4caf50", "#FFEB3B", "#ff9800", "#e23535", "#a10707"];
+                    options = {
+                        series: values,
+                        chart: {
+                            type: 'pie',
+                            height: 300
+                        },
+                        labels: labels,
+                        colors: colors,
+                        legend: {
+                            position: 'bottom'
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function(val, opts) {
+                                const label = opts.w.globals.labels[opts.seriesIndex];
+                                return `${label}: ${val.toFixed(1)}%`;
+                            }
+                        },
+                        responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                chart: {
+                                    height: 250
+                                },
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }]
+                    };
+                }
+
+                const chart = new ApexCharts(div, options);
+                chart.render();
+            });
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('selectService');
+
+            function showOnlyChart(serviceId) {
+                const charts = document.querySelectorAll('.chart-service');
+
+                // Masquer tous les graphiques
+                charts.forEach(chart => {
+                    chart.style.display = 'none';
+                });
+
+                // Afficher le graphique sélectionné
+                const targetChart = document.getElementById('chartService-' + serviceId);
+                if (targetChart) {
+                    targetChart.style.display = 'block';
+                }
+            }
+
+            // Lors du changement de sélection
+            select.addEventListener('change', function() {
+                const selectedId = this.value;
+                if (selectedId) {
+                    showOnlyChart(selectedId);
+                }
+            });
+
+            // Afficher automatiquement le premier service
+            const firstOption = select.querySelector('option[value]:not([value=""])');
+            if (firstOption) {
+                select.value = firstOption.value;
+                showOnlyChart(firstOption.value);
+            }
         });
     </script>
 @endsection

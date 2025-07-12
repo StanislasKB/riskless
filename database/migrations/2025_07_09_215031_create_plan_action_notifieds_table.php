@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('plan_action_notifieds', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('plan_action_id')->constrained('plan_actions')->nullOnDelete();
-              $table->boolean('is_notified')->default(true);
+            $table->foreignId('plan_action_id')->constrained('plan_actions')->nullOnDelete();
+            $table->boolean('is_notified')->default(true);
             $table->timestamps();
         });
     }
